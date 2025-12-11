@@ -1,0 +1,273 @@
+/* --- About Page Hero Section --- */
+.about-hero {
+  position: relative;
+  width: 100%;
+  height: 70vh; /* shorter than landing but immersive */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: url('../assets/about-hero-bg.jpg') no-repeat center center;
+  background-size: cover;
+  filter: brightness(0.7);
+  z-index: -1;
+}
+
+.about-hero h1 {
+  font-size: 56px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.about-hero p {
+  font-size: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+  color: #f0f0f0;
+}
+
+/* --- Mission & Vision (Enhanced) --- */
+.mission-vision {
+  padding: 120px 20px;
+  background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+  text-align: center;
+}
+
+.mission-vision h2 {
+  font-size: 40px;
+  margin-bottom: 60px;
+  color: var(--text-dark);
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.mission-vision h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: var(--primary-blue);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+.mv-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 50px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.mv-card {
+  background: #fff;
+  padding: 60px 30px 40px; /* more top padding for icon space */
+  border-radius: 20px;
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.mv-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+}
+
+/* Add icon placeholder above each card */
+.mv-card::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: var(--primary-blue);
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-image: url('../assets/mission.png'); /* replace per card */
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.mv-card h3 {
+  font-size: 26px;
+  margin: 25px 0 20px;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.mv-card p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.8;
+  padding: 0 15px;
+}
+
+/* Optional: subtle tilt animation on hover */
+.mv-card:hover::before {
+  transform: translateX(-50%) rotate(10deg);
+}
+
+
+/* --- Core Values --- */
+.core-values {
+  padding: 100px 20px;
+  text-align: center;
+  background: #fff;
+}
+
+.core-values h2 {
+  font-size: 38px;
+  margin-bottom: 60px;
+  position: relative;
+  display: inline-block;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.core-values h2::after {
+  content: '';
+  display: block;
+  width: 70px;
+  height: 4px;
+  background: var(--primary-blue);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 35px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.value-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; /* ensure image fits inside */
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+}
+
+.value-card img {
+  width: 100%; /* full width of card */
+  height: 200px; /* fixed height, adjust if needed */
+  object-fit: cover;
+  border-radius: 0; /* remove blue circle/border */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.value-card img:hover {
+  transform: scale(1.05);
+}
+
+.value-card h3 {
+  font-size: 22px;
+  margin: 20px 0 12px;
+  color: var(--text-dark);
+}
+
+.value-card p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  padding: 0 15px;
+}
+
+
+
+/* --- Team Section --- */
+.team-section {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #f0f6fc, #e7f3ff);
+  text-align: center;
+}
+
+.team-section h2 {
+  font-size: 38px;
+  margin-bottom: 60px;
+  position: relative;
+  display: inline-block;
+}
+
+.team-section h2::after {
+  content: '';
+  display: block;
+  width: 70px;
+  height: 4px;
+  background: var(--primary-blue);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 35px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.team-card {
+  background: #fff;
+  padding: 30px 20px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.team-card img {
+  width: 100%;
+  height: 280px;
+  border-radius: 14px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.team-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.team-card p {
+  font-size: 16px;
+  color: #666;
+}

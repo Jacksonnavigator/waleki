@@ -1,0 +1,127 @@
+/* styles/footer.css */
+.footer {
+    background-color: #f8f8f8; /* Light gray background */
+    padding: 60px 80px 20px; /* Top, horizontal, bottom padding */
+    font-family: 'Open Sans', sans-serif;
+    color: #555;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    margin-right: 30px;
+}
+
+.footer-section:last-child {
+    margin-right: 0;
+}
+
+.footer-section h3, .footer-section h4 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.footer-waleki h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.footer-waleki p {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.newsletter-signup {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.newsletter-signup input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 15px;
+    font-size: 15px;
+    outline: none;
+}
+
+.newsletter-signup input::placeholder {
+    color: #aaa;
+}
+
+.newsletter-signup .signup-button {
+    background-color: #007bff;
+    border: none;
+    width: 50px; /* Fixed width for the button */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.newsletter-signup .signup-button:hover {
+    background-color: #0056b3;
+}
+
+.newsletter-signup .signup-button::after {
+    content: '→'; /* Right arrow character */
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+    color: #555;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #007bff;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    font-size: 14px;
+    color: #777;
+}
+
+.footer-social a {
+    color: #777;
+    font-size: 20px;
+    margin-left: 20px;
+    transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: #007bff;
+}

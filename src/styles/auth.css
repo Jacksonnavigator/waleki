@@ -1,0 +1,207 @@
+/* --- Reduced & Enhanced Auth CSS --- */
+
+/* General Body/HTML */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100%;
+}
+
+
+/* Background */
+.login-background {
+  background-image: url('/src/assets/well-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+/* Header */
+.login-header-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Header Logo (image + text aligned) */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.header-logo img {
+  width: 35px;
+  height: auto;
+}
+
+.waleki-logo-header {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Monitor Text */
+.monitor-text {
+  font-size: 14px;
+  margin-left: auto;
+  margin-right: 15px;
+}
+
+/* Hamburger */
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 1px;
+}
+
+/* Login Card */
+.login-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 120px;
+  position: relative;
+}
+
+/* Logo Above Form */
+.login-logo {
+  width: 130px;
+  height: auto;
+  margin-bottom: 25px;
+  display: block;
+  border-radius: 0; /* no rounded corners */
+  box-shadow: none; /* remove glassmorphism/shadow */
+  z-index: 2;
+}
+
+/* Remove old water drop completely */
+.water-drop-icon {
+  display: none;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 300px;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.form-group-login {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 25px;
+  height: 42px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.form-group-login input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 0 15px 0 40px;
+  font-size: 14px;
+  background: transparent;
+  color: #333;
+}
+
+.form-group-login input::placeholder {
+  color: #a0a0a0;
+  font-size: 13px;
+}
+
+/* Icon inside input */
+.icon-placeholder {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #737373;
+  font-size: 18px;
+}
+
+/* Login button */
+.login-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  font-weight: 500;
+  box-shadow: 0px 3px 8px rgba(0,123,255,0.3);
+}
+
+.login-btn:hover {
+  background-color: #0069d9;
+}
+
+/* Footer links */
+.login-footer-links {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 15px;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 12px;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #007bff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .login-header-top {
+    padding: 10px 15px;
+  }
+  .waleki-logo-header {
+    font-size: 18px;
+  }
+  .monitor-text {
+    font-size: 12px;
+  }
+  .login-form, .login-footer-links {
+    width: 90%;
+    max-width: 280px;
+  }
+}
