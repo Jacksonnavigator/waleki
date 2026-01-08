@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/waleki.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description"
+    content="Waleki - Water Well Management System. Monitor your wells in real-time with LoRa sensor technology." />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/waleki.png" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+  <!-- Preload resources for faster loading -->
+  <link rel="preload" href="%PUBLIC_URL%/waleki.png" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <title>Waleki - Water Well Management</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Splash Screen Container */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Decorative background elements */
+    #splash-screen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+      animation: bgPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes bgPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    /* Logo Container */
+    .splash-logo-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    /* Logo Badge */
+    .splash-logo-badge {
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      animation: logoEntry 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .splash-logo-badge::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      border-radius: 28px;
+      opacity: 0;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes logoEntry {
+      0% {
+        transform: scale(0.3) rotate(-10deg);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.1) rotate(2deg);
+      }
+
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    @keyframes shimmer {
+
+      0%,
+      100% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .splash-logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Brand Text */
+    .splash-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: textEntry 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s backwards;
+    }
+
+    @keyframes textEntry {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .splash-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -1px;
+      margin: 0;
+    }
+
+    .splash-subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.5px;
+    }
+
+    /* Loading Animation */
+    .splash-loading {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: loadingEntry 1s cubic-bezier(0.4, 0, 0.2, 1) 0.6s backwards;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 240px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+      background-size: 200% 100%;
+      border-radius: 2px;
+      animation: progressFlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes progressFlow {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Loading Dots */
+    .loading-dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.5px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      animation: dotPulse 1.4s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes dotPulse {
+
+      0%,
+      100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* Version Badge */
+    .version-badge {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeIn 1s ease-in-out 1s backwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .version-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .version-number {
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.5px;
+    }
+
+    /* Hide splash screen */
+    .splash-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* After splash screen fades */
+    body.loaded {
+      overflow: auto;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 640px) {
+      .splash-logo-badge {
+        width: 100px;
+        height: 100px;
+        border-radius: 24px;
+      }
+
+      .splash-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .splash-title {
+        font-size: 36px;
+      }
+
+      .splash-subtitle {
+        font-size: 14px;
+      }
+
+      .progress-container {
+        width: 200px;
+      }
+    }
+
+    /* Prevent flash of unstyled content */
+    #root {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+    }
+
+    body.loaded #root {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #000;
+        color: white;
+        font-family: system-ui;
+        text-align: center;
+        padding: 20px;
+      ">
+      <div>
+        <h1 style="font-size: 24px; margin-bottom: 16px;">JavaScript Required</h1>
+        <p style="color: rgba(255,255,255,0.7);">You need to enable JavaScript to run Waleki Dashboard.</p>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-logo-container">
+      <!-- Logo Badge -->
+      <div class="splash-logo-badge">
+        <img src="%PUBLIC_URL%/walekis.png" alt="Waleki Logo" class="splash-logo"
+          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22white%22 stroke-width=%222%22%3E%3Cpath d=%22M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z%22/%3E%3C/svg%3E'">
+      </div>
+
+      <!-- Brand Text -->
+      <div class="splash-brand">
+        <h1 class="splash-title">Waleki</h1>
+        <p class="splash-subtitle">Water Well Management</p>
+      </div>
+
+      <!-- Loading Animation -->
+      <div class="splash-loading">
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="loading-dots">
+          <span class="loading-text">Loading</span>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version Badge -->
+    <div class="version-badge">
+      <span class="version-text">Version</span>
+      <span class="version-number">v1.0.0</span>
+    </div>
+  </div>
+
+  <!-- Main App Container -->
+  <div id="root"></div>
+
+  <script>
+    // Performance monitoring
+    const performanceData = {
+      startTime: performance.now(),
+      loadComplete: false
+    };
+
+    // Hide splash screen with smooth transition
+    function hideSplashScreen() {
+      const splash = document.getElementById('splash-screen');
+
+      if (splash && !performanceData.loadComplete) {
+        performanceData.loadComplete = true;
+
+        // Add fade out class
+        splash.classList.add('splash-hidden');
+
+        // Enable body scroll
+        document.body.classList.add('loaded');
+
+        // Remove splash from DOM after animation
+        setTimeout(() => {
+          if (splash.parentNode) {
+            splash.remove();
+          }
+        }, 600);
+
+        // Log load time
+        const loadTime = performance.now() - performanceData.startTime;
+        console.log(`⚡ Waleki loaded in ${Math.round(loadTime)}ms`);
+      }
+    }
+
+    // Wait for React app to mount
+    window.addEventListener('load', function () {
+      // Minimum splash screen display time for better UX
+      const minDisplayTime = 1500; // 1.5 seconds
+      const elapsedTime = performance.now() - performanceData.startTime;
+      const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+      setTimeout(hideSplashScreen, remainingTime);
+    });
+
+    // Fallback: force hide splash screen if taking too long
+    setTimeout(function () {
+      hideSplashScreen();
+      console.warn('⚠️ Splash screen timeout - forcing hide');
+    }, 8000); // Maximum 8 seconds
+
+    // Handle visibility change (tab switching)
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && performanceData.loadComplete) {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.remove();
+        }
+      }
+    });
+
+    // Detect React mount
+    const observer = new MutationObserver(function (mutations) {
+      const root = document.getElementById('root');
+      if (root && root.children.length > 0) {
+        observer.disconnect();
+        // React has rendered, proceed with minimum display time logic
+      }
+    });
+
+    observer.observe(document.getElementById('root'), {
+      childList: true,
+      subtree: true
+    });
+  </script>
+</body>
+
+</html>

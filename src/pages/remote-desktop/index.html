@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raspberry Pi Remote Desktop</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- noVNC core library (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@novnc/novnc/core/rfb.js"></script>
+</head>
+<body>
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <h2>Admin Authentication</h2>
+      <input type="password" id="vnc-password" placeholder="Enter VNC Password" autofocus />
+      <button id="auth-btn">Connect</button>
+      <div id="auth-error"></div>
+    </div>
+  </div>
+  <div id="noVNC_container" style="display:none;">
+    <div id="toolbar">
+      <button id="fullscreen-btn">Fullscreen</button>
+      <button id="disconnect-btn">Disconnect</button>
+    </div>
+    <div id="noVNC_screen"></div>
+  </div>
+  <script src="connect.js"></script>
+</body>
+</html>

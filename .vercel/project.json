@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_Vi9j9E7rOafVLYRHSmfYh2bv0Xjz",
+  "orgId": "team_0Oh0v1sPm8n1eJAntwhj6hGw",
+  "projectName": "waleki-dashboard",
+  "settings": {
+    "createdAt": 1762854909638,
+    "framework": "create-react-app",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}

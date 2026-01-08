@@ -1,0 +1,122 @@
+/* --- Services Page --- */
+.services-hero {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+  background: url('../assets/services-hero-bg.jpg') no-repeat center center;
+  background-size: cover;
+  filter: brightness(0.7);
+}
+
+.services-hero h1 {
+  font-size: 56px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.services-hero p {
+  font-size: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* --- Services Cards Section --- */
+.services-section {
+  padding: 100px 20px;
+  text-align: center;
+  background: #f9f9f9;
+}
+
+.services-section h2 {
+  font-size: 38px;
+  margin-bottom: 60px;
+  display: inline-block;
+  position: relative;
+}
+
+.services-section h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: var(--primary-blue);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.service-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  padding: 25px 20px 40px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
+
+.service-card img {
+  width: 100%;
+  height: 200px;
+  border-radius: 14px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.service-card h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: var(--text-dark);
+}
+
+.service-card p {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* --- CTA Section --- */
+.services-cta {
+  padding: 80px 20px;
+  background: var(--primary-blue);
+  color: #fff;
+  text-align: center;
+}
+
+.services-cta h2 {
+  font-size: 38px;
+  margin-bottom: 20px;
+}
+
+.services-cta p {
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.services-cta .hero-btn.primary {
+  background-color: #fff;
+  color: var(--primary-blue);
+  border: 1px solid #fff;
+}
+
+.services-cta .hero-btn.primary:hover {
+  background-color: #f0f0f0;
+  color: var(--primary-blue);
+}

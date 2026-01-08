@@ -1,0 +1,58 @@
+/* styles/navbar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 80px; /* Adjust padding as needed */
+    background-color: transparent; /* Assuming a transparent overlay on the hero image */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    font-family: 'Open Sans', sans-serif; /* Use your specified font */
+}
+
+.navbar-logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff; /* White logo for contrast on the hero image */
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links li {
+    margin: 0 20px;
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #f0f0f0;
+}
+
+.navbar-monitor-btn {
+    background-color: #007bff; /* Blue button */
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-monitor-btn:hover {
+    background-color: #0056b3;
+}

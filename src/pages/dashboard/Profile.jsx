@@ -1,0 +1,1607 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  User, Mail, Phone, MapPin, Calendar, Shield, Key,
+  Camera, Edit, Save, X, Check, AlertTriangle, Bell,
+  Activity, Clock, Lock, Trash2, Download, Upload,
+  Settings, LogOut, Eye, EyeOff, Copy, CheckCircle,
+  Smartphone, Globe, CreditCard, Award, Briefcase
+} from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { ref, onValue, set, update } from 'firebase/database';
+import { database } from '../../config/firebase';
+
+// Toast Component
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#000';
+  const Icon = type === 'success' ? CheckCircle : type === 'error' ? X : AlertTriangle;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '24px',
+      right: '24px',
+      background: bgColor,
+      color: 'white',
+      padding: '16px 24px',
+      borderRadius: '12px',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+      zIndex: 10000,
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      animation: 'slideIn 0.3s ease',
+      minWidth: '320px'
+    }}>
+      <Icon size={20} />
+      <span style={{ fontSize: '14px', fontWeight: 600 }}>{message}</span>
+    </div>
+  );
+};
+
+const ProfilePage = () => {
+  const navigate = useNavigate();
+  const { currentUser, logout, updateUserProfile } = useAuth();
+  const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Profile Data
+  const [profileData, setProfileData] = useState({
+    displayName: '',
+    email: '',
+    phone: '',
+    bio: '',
+    location: '',
+    region: '',
+    country: 'Tanzania',
+    timezone: 'Africa/Dar_es_Salaam',
+    photoURL: '',
+    role: 'Admin',
+    department: 'Operations',
+    joinDate: new Date().toISOString()
+  });
+
+  // Editing States
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [tempProfileData, setTempProfileData] = useState({});
+
+  // Password Change
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+
+  // Activity Log
+  const [activityLog, setActivityLog] = useState([]);
+
+  // Security Settings
+  const [securitySettings, setSecuritySettings] = useState({
+    twoFactorEnabled: false,
+    emailVerified: false,
+    phoneVerified: false,
+    lastPasswordChange: null,
+    loginHistory: []
+  });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+
+  // Load user data from Firebase
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+
+    const loadUserData = async () => {
+      try {
+        // Set basic data from auth
+        const initialData = {
+          displayName: currentUser.displayName || 'User',
+          email: currentUser.email || '',
+          photoURL: currentUser.photoURL || '',
+          ...profileData
+        };
+
+        // Load from Firebase if exists
+        const userRef = ref(database, `users/${currentUser.uid}`);
+        onValue(userRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            setProfileData({ ...initialData, ...data });
+
+            if (data.activityLog) {
+              setActivityLog(Object.values(data.activityLog).sort((a, b) =>
+                new Date(b.timestamp) - new Date(a.timestamp)
+              ).slice(0, 10));
+            }
+
+            if (data.security) {
+              setSecuritySettings({ ...securitySettings, ...data.security });
+            }
+          } else {
+            setProfileData(initialData);
+          }
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showToast('Failed to load profile data', 'error');
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [currentUser]);
+
+  // Save profile data
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      const userRef = ref(database, `users/${currentUser.uid}/profile`);
+      await set(userRef, tempProfileData);
+
+      // Update auth profile if name or photo changed
+      if (tempProfileData.displayName !== profileData.displayName ||
+        tempProfileData.photoURL !== profileData.photoURL) {
+        await updateUserProfile({
+          displayName: tempProfileData.displayName,
+          photoURL: tempProfileData.photoURL
+        });
+      }
+
+      setProfileData(tempProfileData);
+      setEditingProfile(false);
+
+      // Log activity
+      await logActivity('Profile updated', 'Profile information was modified');
+
+      showToast('Profile updated successfully!', 'success');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      showToast('Failed to save profile', 'error');
+    }
+    setSaving(false);
+  };
+
+  // Handle avatar upload
+  const handleAvatarUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Image must be less than 2MB', 'error');
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      showToast('Please upload an image file', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const newPhotoURL = e.target.result;
+      if (editingProfile) {
+        setTempProfileData({ ...tempProfileData, photoURL: newPhotoURL });
+      } else {
+        setProfileData({ ...profileData, photoURL: newPhotoURL });
+        handleSaveAvatar(newPhotoURL);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Save avatar
+  const handleSaveAvatar = async (photoURL) => {
+    setSaving(true);
+    try {
+      const userRef = ref(database, `users/${currentUser.uid}/profile/photoURL`);
+      await set(userRef, photoURL);
+
+      await updateUserProfile({ photoURL });
+      await logActivity('Avatar updated', 'Profile picture was changed');
+
+      showToast('Avatar updated successfully!', 'success');
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+      showToast('Failed to update avatar', 'error');
+    }
+    setSaving(false);
+  };
+
+  // Change password
+  const handleChangePassword = async () => {
+    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+      showToast('Please fill in all password fields', 'error');
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      showToast('New passwords do not match', 'error');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      showToast('Password must be at least 6 characters', 'error');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // In production, use Firebase Auth to change password
+      // await updatePassword(currentUser, passwordForm.newPassword);
+
+      // Update last password change
+      const securityRef = ref(database, `users/${currentUser.uid}/security/lastPasswordChange`);
+      await set(securityRef, new Date().toISOString());
+
+      await logActivity('Password changed', 'Account password was updated');
+
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      showToast('Password changed successfully!', 'success');
+    } catch (error) {
+      console.error('Error changing password:', error);
+      showToast('Failed to change password', 'error');
+    }
+    setSaving(false);
+  };
+
+  // Log activity
+  const logActivity = async (action, description) => {
+    try {
+      const activityRef = ref(database, `users/${currentUser.uid}/activityLog/${Date.now()}`);
+      const activity = {
+        action,
+        description,
+        timestamp: new Date().toISOString(),
+        ip: 'Unknown' // In production, get actual IP
+      };
+      await set(activityRef, activity);
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
+  // Delete account
+  const handleDeleteAccount = async () => {
+    const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+    if (confirmation !== 'DELETE') {
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // In production, delete user data and account
+      await logout();
+      navigate('/login');
+      showToast('Account deleted successfully', 'success');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      showToast('Failed to delete account', 'error');
+    }
+    setSaving(false);
+  };
+
+  // Export user data
+  const handleExportData = () => {
+    const data = {
+      profile: profileData,
+      security: securitySettings,
+      activityLog: activityLog,
+      exportDate: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `waleki-profile-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showToast('Profile data exported successfully!', 'success');
+    logActivity('Data exported', 'User profile data was exported');
+  };
+
+  // Get user initials
+  const getUserInitials = () => {
+    const name = profileData.displayName || 'User';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Format relative time
+  const formatRelativeTime = (dateString) => {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    return `${days} day${days !== 1 ? 's' : ''} ago`;
+  };
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        gap: '16px'
+      }}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          border: '3px solid #F0F0F0',
+          borderTopColor: '#000',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite'
+        }}></div>
+        <p style={{ fontSize: '14px', color: '#666', fontWeight: 500 }}>Loading Profile...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profile-page">
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+          from {
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        .profile-page {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+          padding: 24px;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        /* Header Card */
+        .profile-header {
+          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
+          border-radius: 24px;
+          padding: 48px;
+          margin-bottom: 24px;
+          color: white;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+        }
+
+        .profile-header::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -20%;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%);
+          border-radius: 50%;
+        }
+
+        .header-content {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          align-items: center;
+          gap: 32px;
+        }
+
+        .avatar-section {
+          position: relative;
+        }
+
+        .avatar-large {
+          width: 120px;
+          height: 120px;
+          border-radius: 24px;
+          background: linear-gradient(135deg, #000 0%, #333 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 48px;
+          font-weight: 700;
+          border: 4px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+          overflow: hidden;
+        }
+
+        .avatar-large img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .avatar-upload-btn {
+          position: absolute;
+          bottom: -8px;
+          right: -8px;
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          background: white;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-upload-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-info {
+          flex: 1;
+        }
+
+        .header-name {
+          font-size: 32px;
+          font-weight: 700;
+          margin-bottom: 8px;
+          letter-spacing: -1px;
+        }
+
+        .header-role {
+          font-size: 16px;
+          opacity: 0.9;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .header-stats {
+          display: flex;
+          gap: 32px;
+          margin-top: 20px;
+        }
+
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .stat-label {
+          font-size: 12px;
+          opacity: 0.7;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+          font-size: 24px;
+          font-weight: 700;
+        }
+
+        .header-actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .btn-header {
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+        }
+
+        .btn-white {
+          background: white;
+          color: #000;
+        }
+
+        .btn-white:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-transparent {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          backdrop-filter: blur(10px);
+        }
+
+        .btn-transparent:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Content Layout */
+        .profile-content {
+          display: grid;
+          grid-template-columns: 280px 1fr;
+          gap: 24px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .sidebar-card {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border-radius: 20px;
+          padding: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-item {
+          width: 100%;
+          padding: 14px 16px;
+          background: transparent;
+          border: none;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #666;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: left;
+        }
+
+        .nav-item:hover {
+          background: #FAFAFA;
+          color: #000;
+        }
+
+        .nav-item.active {
+          background: linear-gradient(135deg, #0369a1, #0284c7);
+          color: white;
+          box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
+        }
+
+        .quick-stats {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .quick-stat {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px;
+          background: #FAFAFA;
+          border-radius: 10px;
+        }
+
+        .quick-stat-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .quick-stat-icon {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+          background: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #666;
+        }
+
+        .quick-stat-label {
+          font-size: 12px;
+          color: #999;
+          margin-bottom: 2px;
+        }
+
+        .quick-stat-value {
+          font-size: 14px;
+          font-weight: 700;
+          color: #000;
+        }
+
+        /* Main Content */
+        .main-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border-radius: 20px;
+          padding: 32px;
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .content-header {
+          margin-bottom: 32px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid #F0F0F0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .content-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #000;
+          letter-spacing: -0.3px;
+        }
+
+        /* Form */
+        .form-section {
+          margin-bottom: 32px;
+        }
+
+        .section-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .form-group.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .form-label {
+          font-size: 13px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 8px;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+          padding: 12px 16px;
+          border: 2px solid #E8E8E8;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 500;
+          outline: none;
+          transition: all 0.2s ease;
+          background: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+          border-color: #0369a1;
+          box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
+        }
+
+        .form-input:disabled, .form-select:disabled, .form-textarea:disabled {
+          background: #FAFAFA;
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 100px;
+          font-family: inherit;
+        }
+
+        .input-wrapper {
+          position: relative;
+        }
+
+        .input-icon {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          color: #999;
+          transition: color 0.2s ease;
+        }
+
+        .input-icon:hover {
+          color: #000;
+        }
+
+        /* Buttons */
+        .form-actions {
+          display: flex;
+          gap: 12px;
+          margin-top: 24px;
+        }
+
+        .btn {
+          padding: 12px 24px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+        }
+
+        .btn-dark {
+          background: linear-gradient(135deg, #0369a1, #0284c7);
+          color: white;
+          box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);
+        }
+
+        .btn-dark:hover {
+          background: linear-gradient(135deg, #0c4a6e, #0369a1);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(3, 105, 161, 0.35);
+        }
+
+        .btn-outline {
+          background: rgba(255, 255, 255, 0.8);
+          color: #0369a1;
+          border: 2px solid #e2e8f0;
+        }
+
+        .btn-outline:hover {
+          border-color: #0369a1;
+          background: white;
+        }
+
+        .btn-danger {
+          background: #DC2626;
+          color: white;
+        }
+
+        .btn-danger:hover {
+          background: #B91C1C;
+        }
+
+        .btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        /* Info Card */
+        .info-card {
+          padding: 20px;
+          background: #FAFAFA;
+          border-radius: 12px;
+          border: 1px solid #F0F0F0;
+          display: flex;
+          gap: 16px;
+        }
+
+        .info-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .info-icon.success {
+          background: #DCFCE7;
+          color: #16A34A;
+        }
+
+        .info-icon.warning {
+          background: #FEF3C7;
+          color: #D97706;
+        }
+
+        .info-icon.error {
+          background: #FEE2E2;
+          color: #DC2626;
+        }
+
+        .info-content h4 {
+          font-size: 14px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 4px;
+        }
+
+        .info-content p {
+          font-size: 13px;
+          color: #666;
+          line-height: 1.6;
+        }
+
+        /* Activity Log */
+        .activity-list {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .activity-item {
+          padding: 16px;
+          background: #FAFAFA;
+          border-radius: 12px;
+          border: 1px solid #F0F0F0;
+          display: flex;
+          gap: 16px;
+        }
+
+        .activity-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          background: #000;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .activity-content {
+          flex: 1;
+        }
+
+        .activity-action {
+          font-size: 14px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 4px;
+        }
+
+        .activity-description {
+          font-size: 13px;
+          color: #666;
+          margin-bottom: 6px;
+        }
+
+        .activity-time {
+          font-size: 12px;
+          color: #999;
+        }
+
+        /* Security Badge */
+        .security-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .security-badge.verified {
+          background: #DCFCE7;
+          color: #16A34A;
+        }
+
+        .security-badge.unverified {
+          background: #FEE2E2;
+          color: #DC2626;
+        }
+
+        /* Empty State */
+        .empty-state {
+          text-align: center;
+          padding: 60px 20px;
+        }
+
+        .empty-state svg {
+          margin: 0 auto 16px;
+          opacity: 0.3;
+        }
+
+        .empty-state h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 8px;
+        }
+
+        .empty-state p {
+          font-size: 14px;
+          color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .profile-content {
+            grid-template-columns: 1fr;
+          }
+
+          .sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+
+          .sidebar-card {
+            grid-column: 1 / -1;
+          }
+
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .header-content {
+            flex-direction: column;
+            text-align: center;
+          }
+
+          .header-stats {
+            justify-content: center;
+          }
+
+          .header-actions {
+            width: 100%;
+            flex-direction: column;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .profile-page {
+            padding: 16px;
+          }
+
+          .profile-header {
+            padding: 24px;
+          }
+
+          .main-content {
+            padding: 24px;
+          }
+
+          .header-name {
+            font-size: 24px;
+          }
+
+          .avatar-large {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+          }
+
+          .header-stats {
+            gap: 20px;
+          }
+        }
+      `}</style>
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleAvatarUpload}
+        style={{ display: 'none' }}
+      />
+
+      {/* Header */}
+      <div className="profile-header">
+        <div className="header-content">
+          <div className="avatar-section">
+            <div className="avatar-large">
+              {profileData.photoURL ? (
+                <img src={profileData.photoURL} alt="Profile" />
+              ) : (
+                <span>{getUserInitials()}</span>
+              )}
+            </div>
+            <button
+              className="avatar-upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+              title="Change avatar"
+            >
+              <Camera size={20} style={{ color: '#000' }} />
+            </button>
+          </div>
+
+          <div className="header-info">
+            <h1 className="header-name">{profileData.displayName}</h1>
+            <div className="header-role">
+              <Award size={16} />
+              {profileData.role} • {profileData.department}
+            </div>
+            <div className="header-stats">
+              <div className="stat-item">
+                <span className="stat-label">Member Since</span>
+                <span className="stat-value">{formatDate(profileData.joinDate).split(',')[1]}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Activities</span>
+                <span className="stat-value">{activityLog.length}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Location</span>
+                <span className="stat-value">{profileData.country}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="header-actions">
+            <button className="btn-header btn-white" onClick={() => navigate('/settings')}>
+              <Settings size={16} />
+              Settings
+            </button>
+            <button className="btn-header btn-transparent" onClick={handleExportData}>
+              <Download size={16} />
+              Export Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="profile-content">
+        {/* Sidebar */}
+        <div className="sidebar">
+          <div className="sidebar-card">
+            <button
+              className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
+              onClick={() => setActiveTab('profile')}
+            >
+              <User size={18} />
+              <span>Profile Info</span>
+            </button>
+
+            <button
+              className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
+              onClick={() => setActiveTab('security')}
+            >
+              <Shield size={18} />
+              <span>Security</span>
+            </button>
+
+            <button
+              className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`}
+              onClick={() => setActiveTab('activity')}
+            >
+              <Activity size={18} />
+              <span>Activity Log</span>
+            </button>
+
+            <button
+              className={`nav-item ${activeTab === 'danger' ? 'active' : ''}`}
+              onClick={() => setActiveTab('danger')}
+            >
+              <AlertTriangle size={18} />
+              <span>Danger Zone</span>
+            </button>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="sidebar-card">
+            <div className="quick-stats">
+              <div className="quick-stat">
+                <div className="quick-stat-info">
+                  <div className="quick-stat-icon">
+                    <Mail size={16} />
+                  </div>
+                  <div>
+                    <div className="quick-stat-label">Email Status</div>
+                    <div className="quick-stat-value">
+                      {securitySettings.emailVerified ? 'Verified' : 'Unverified'}
+                    </div>
+                  </div>
+                </div>
+                {securitySettings.emailVerified ? (
+                  <CheckCircle size={16} style={{ color: '#16A34A' }} />
+                ) : (
+                  <X size={16} style={{ color: '#DC2626' }} />
+                )}
+              </div>
+
+              <div className="quick-stat">
+                <div className="quick-stat-info">
+                  <div className="quick-stat-icon">
+                    <Shield size={16} />
+                  </div>
+                  <div>
+                    <div className="quick-stat-label">2FA Status</div>
+                    <div className="quick-stat-value">
+                      {securitySettings.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="quick-stat">
+                <div className="quick-stat-info">
+                  <div className="quick-stat-icon">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <div className="quick-stat-label">Last Login</div>
+                    <div className="quick-stat-value">
+                      {formatRelativeTime(new Date().toISOString())}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="main-content">
+          {/* PROFILE TAB */}
+          {activeTab === 'profile' && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Profile Information</h2>
+                {!editingProfile ? (
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => {
+                      setEditingProfile(true);
+                      setTempProfileData({ ...profileData });
+                    }}
+                  >
+                    <Edit size={16} />
+                    Edit Profile
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button
+                      className="btn btn-dark"
+                      onClick={handleSaveProfile}
+                      disabled={saving}
+                    >
+                      <Save size={16} />
+                      {saving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => {
+                        setEditingProfile(false);
+                        setTempProfileData({});
+                      }}
+                    >
+                      <X size={16} />
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title">
+                  <User size={18} />
+                  Personal Information
+                </h3>
+
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Full Name *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editingProfile ? tempProfileData.displayName : profileData.displayName}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, displayName: e.target.value })}
+                      disabled={!editingProfile}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Email Address *</label>
+                    <input
+                      type="email"
+                      className="form-input"
+                      value={editingProfile ? tempProfileData.email : profileData.email}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, email: e.target.value })}
+                      disabled={!editingProfile}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      value={editingProfile ? tempProfileData.phone : profileData.phone}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, phone: e.target.value })}
+                      placeholder="+255 XXX XXX XXX"
+                      disabled={!editingProfile}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Role</label>
+                    <select
+                      className="form-select"
+                      value={editingProfile ? tempProfileData.role : profileData.role}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, role: e.target.value })}
+                      disabled={!editingProfile}
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Operator">Operator</option>
+                      <option value="Viewer">Viewer</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label className="form-label">Bio</label>
+                    <textarea
+                      className="form-textarea"
+                      value={editingProfile ? tempProfileData.bio : profileData.bio}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, bio: e.target.value })}
+                      placeholder="Tell us about yourself..."
+                      disabled={!editingProfile}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title">
+                  <MapPin size={18} />
+                  Location & Timezone
+                </h3>
+
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Location</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editingProfile ? tempProfileData.location : profileData.location}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, location: e.target.value })}
+                      placeholder="City"
+                      disabled={!editingProfile}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Region</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editingProfile ? tempProfileData.region : profileData.region}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, region: e.target.value })}
+                      placeholder="Region"
+                      disabled={!editingProfile}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Country</label>
+                    <select
+                      className="form-select"
+                      value={editingProfile ? tempProfileData.country : profileData.country}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, country: e.target.value })}
+                      disabled={!editingProfile}
+                    >
+                      <option value="Tanzania">Tanzania</option>
+                      <option value="Kenya">Kenya</option>
+                      <option value="Uganda">Uganda</option>
+                      <option value="Rwanda">Rwanda</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Timezone</label>
+                    <select
+                      className="form-select"
+                      value={editingProfile ? tempProfileData.timezone : profileData.timezone}
+                      onChange={(e) => setTempProfileData({ ...tempProfileData, timezone: e.target.value })}
+                      disabled={!editingProfile}
+                    >
+                      <option value="Africa/Dar_es_Salaam">East Africa Time (EAT)</option>
+                      <option value="UTC">UTC</option>
+                      <option value="America/New_York">Eastern Time (ET)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* SECURITY TAB */}
+          {activeTab === 'security' && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Security Settings</h2>
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title">
+                  <Key size={18} />
+                  Change Password
+                </h3>
+
+                <div className="form-grid">
+                  <div className="form-group full-width">
+                    <label className="form-label">Current Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPasswords.current ? 'text' : 'password'}
+                        className="form-input"
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                        placeholder="Enter current password"
+                      />
+                      <span
+                        className="input-icon"
+                        onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                      >
+                        {showPasswords.current ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">New Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPasswords.new ? 'text' : 'password'}
+                        className="form-input"
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                        placeholder="Enter new password"
+                      />
+                      <span
+                        className="input-icon"
+                        onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                      >
+                        {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Confirm New Password</label>
+                    <div className="input-wrapper">
+                      <input
+                        type={showPasswords.confirm ? 'text' : 'password'}
+                        className="form-input"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                        placeholder="Confirm new password"
+                      />
+                      <span
+                        className="input-icon"
+                        onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                      >
+                        {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <button
+                    className="btn btn-dark"
+                    onClick={handleChangePassword}
+                    disabled={saving}
+                  >
+                    <Key size={16} />
+                    {saving ? 'Changing...' : 'Change Password'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3 className="section-title">
+                  <Shield size={18} />
+                  Security Status
+                </h3>
+
+                <div className="info-card">
+                  <div className={`info-icon ${securitySettings.emailVerified ? 'success' : 'warning'}`}>
+                    <Mail size={20} />
+                  </div>
+                  <div className="info-content">
+                    <h4>Email Verification</h4>
+                    <p>
+                      {securitySettings.emailVerified
+                        ? 'Your email address has been verified.'
+                        : 'Please verify your email address to secure your account.'}
+                    </p>
+                    {!securitySettings.emailVerified && (
+                      <button className="btn btn-dark" style={{ marginTop: '12px' }}>
+                        Verify Email
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="info-card" style={{ marginTop: '16px' }}>
+                  <div className={`info-icon ${securitySettings.twoFactorEnabled ? 'success' : 'warning'}`}>
+                    <Smartphone size={20} />
+                  </div>
+                  <div className="info-content">
+                    <h4>Two-Factor Authentication</h4>
+                    <p>
+                      {securitySettings.twoFactorEnabled
+                        ? 'Two-factor authentication is enabled on your account.'
+                        : 'Add an extra layer of security to your account.'}
+                    </p>
+                    <button className="btn btn-dark" style={{ marginTop: '12px' }}>
+                      {securitySettings.twoFactorEnabled ? 'Manage 2FA' : 'Enable 2FA'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="info-card" style={{ marginTop: '16px' }}>
+                  <div className="info-icon success">
+                    <Clock size={20} />
+                  </div>
+                  <div className="info-content">
+                    <h4>Password Last Changed</h4>
+                    <p>
+                      {securitySettings.lastPasswordChange
+                        ? formatDate(securitySettings.lastPasswordChange)
+                        : 'Never changed'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ACTIVITY TAB */}
+          {activeTab === 'activity' && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Activity Log</h2>
+              </div>
+
+              {activityLog.length > 0 ? (
+                <div className="activity-list">
+                  {activityLog.map((activity, index) => (
+                    <div key={index} className="activity-item">
+                      <div className="activity-icon">
+                        <Activity size={20} />
+                      </div>
+                      <div className="activity-content">
+                        <div className="activity-action">{activity.action}</div>
+                        <div className="activity-description">{activity.description}</div>
+                        <div className="activity-time">
+                          {formatDate(activity.timestamp)} • {formatRelativeTime(activity.timestamp)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <Activity size={64} style={{ color: '#CCC' }} />
+                  <h3>No Activity Yet</h3>
+                  <p>Your account activity will appear here</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* DANGER ZONE TAB */}
+          {activeTab === 'danger' && (
+            <>
+              <div className="content-header">
+                <h2 className="content-title">Danger Zone</h2>
+              </div>
+
+              <div className="info-card">
+                <div className="info-icon error">
+                  <AlertTriangle size={20} />
+                </div>
+                <div className="info-content">
+                  <h4>Delete Account</h4>
+                  <p>
+                    Once you delete your account, there is no going back. All your data will be permanently removed.
+                    This action cannot be undone.
+                  </p>
+                  <button
+                    className="btn btn-danger"
+                    onClick={handleDeleteAccount}
+                    disabled={saving}
+                    style={{ marginTop: '16px' }}
+                  >
+                    <Trash2 size={16} />
+                    Delete My Account
+                  </button>
+                </div>
+              </div>
+
+              <div className="info-card" style={{ marginTop: '16px' }}>
+                <div className="info-icon warning">
+                  <Download size={20} />
+                </div>
+                <div className="info-content">
+                  <h4>Export Your Data</h4>
+                  <p>
+                    Download a copy of your profile data, activity logs, and account information before deleting your account.
+                  </p>
+                  <button
+                    className="btn btn-dark"
+                    onClick={handleExportData}
+                    style={{ marginTop: '16px' }}
+                  >
+                    <Download size={16} />
+                    Export Data
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;

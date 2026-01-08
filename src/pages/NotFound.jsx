@@ -1,0 +1,165 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DashboardLayout from '../components/DashboardLayout';
+
+const NotFound = () => {
+  const navigate = useNavigate();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  // Track mouse movement for eye following effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Calculate pupil position based on mouse
+  const calculatePupilPosition = (eyeX, eyeY) => {
+    const angle = Math.atan2(mousePosition.y - eyeY, mousePosition.x - eyeX);
+    const distance = Math.min(30, Math.hypot(mousePosition.x - eyeX, mousePosition.y - eyeY) / 20);
+    
+    return {
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance
+    };
+  };
+
+  return (
+    <DashboardLayout>
+      <div style={{
+        minHeight: 'calc(100vh - 80px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#F5E6E8',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
+        padding: '40px 20px'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          maxWidth: '600px',
+          width: '100%'
+        }}>
+          {/* Eyes Container */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '80px',
+            marginBottom: '60px'
+          }}>
+            {/* Left Eye */}
+            <div style={{
+              width: '200px',
+              height: '200px',
+              background: '#F0F0F0',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div 
+                id="left-pupil"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  background: '#000',
+                  borderRadius: '50%',
+                  transition: 'transform 0.1s ease',
+                  transform: `translate(${calculatePupilPosition(window.innerWidth / 2 - 140, 300).x}px, ${calculatePupilPosition(window.innerWidth / 2 - 140, 300).y}px)`
+                }}
+              />
+            </div>
+
+            {/* Right Eye */}
+            <div style={{
+              width: '200px',
+              height: '200px',
+              background: '#F0F0F0',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div 
+                id="right-pupil"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  background: '#000',
+                  borderRadius: '50%',
+                  transition: 'transform 0.1s ease',
+                  transform: `translate(${calculatePupilPosition(window.innerWidth / 2 + 140, 300).x}px, ${calculatePupilPosition(window.innerWidth / 2 + 140, 300).y}px)`
+                }}
+              />
+            </div>
+          </div>
+
+          {/* 404 Text */}
+          <h1 style={{
+            fontSize: '48px',
+            margin: '0 0 8px 0',
+            fontWeight: '300',
+            color: '#000',
+            letterSpacing: '2px',
+            fontFamily: 'Georgia, serif'
+          }}>
+            404, Page Not Found.
+          </h1>
+
+          {/* Button */}
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              background: '#000',
+              color: 'white',
+              padding: '14px 40px',
+              textDecoration: 'none',
+              borderRadius: '50px',
+              fontWeight: '500',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.3s ease',
+              fontSize: '15px',
+              border: 'none',
+              cursor: 'pointer',
+              marginTop: '24px',
+              letterSpacing: '0.5px'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = '#1a1a1a';
+              e.target.style.transform = 'scale(1.05)';
+              e.target.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#000';
+              e.target.style.transform = 'scale(1)';
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            Please Take Me Home
+          </button>
+
+          {/* Optional: Add a subtle message */}
+          <p style={{
+            marginTop: '32px',
+            color: '#666',
+            fontSize: '14px',
+            fontStyle: 'italic'
+          }}>
+            Looks like you've wandered off the path...
+          </p>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default NotFound;
