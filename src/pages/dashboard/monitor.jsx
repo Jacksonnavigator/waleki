@@ -3,9 +3,10 @@ import {
   Activity, Signal, Droplets, AlertTriangle, CheckCircle,
   XCircle, Clock
 } from "lucide-react";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, set } from "firebase/database";
 import { database } from "../../config/firebase";
 import Tooltip from "../../components/Tooltip";
+import { Edit } from "lucide-react";
 // import { useNavigate } from "react-router-dom"; // Unused after header removal
 // Cleaned up unused import
 
@@ -18,8 +19,13 @@ const Monitor = () => {
   const [allReadings, setAllReadings] = useState([]);
   const [allNodes, setAllNodes] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [lastUpdate, setLastUpdate] = useState(new Date()); // Unused
-  // const [autoRefresh, setAutoRefresh] = useState(true); // Unused
+  const [editModal, setEditModal] = useState(null);
+  const [cableLength, setCableLength] = useState("");
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
 
   // const handleRefresh = () => { // Unused
   //   window.location.reload();
@@ -248,7 +254,67 @@ const Monitor = () => {
     });
 
     return Object.values(stats);
+    return Object.values(stats);
   }, [allReadings, allNodes]);
+
+  // Edit cable length
+  const handleEditCableLength = (node) => {
+    // Find the node active stats to show current values
+    const nodeStat = nodeStats.find(n => n.name === node.name);
+    setEditModal({ ...nodeStat, ...node });
+    setCableLength(node.h1_m?.toString() || "");
+  };
+
+  const handleUpdateCableLength = async () => {
+    if (!cableLength || parseFloat(cableLength) <= 0) {
+      showToast("Please enter a valid cable length", 'error');
+      return;
+    }
+
+    try {
+      const nodeConfigRef = ref(database, `config/nodes/${editModal.name}/h1_m`);
+      await set(nodeConfigRef, parseFloat(cableLength));
+
+      setEditModal(null);
+      setCableLength("");
+      showToast(`Cable length updated for ${editModal.name}`, 'success');
+    } catch (error) {
+      console.error("❌ Error updating cable length:", error);
+      showToast("Failed to update cable length", 'error');
+    }
+  };
+
+  // Toast component since it's not imported
+  const Toast = ({ message, type, onClose }) => {
+    useEffect(() => {
+      const timer = setTimeout(onClose, 3000);
+      return () => clearTimeout(timer);
+    }, [onClose]);
+
+    const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#000';
+
+    return (
+      <div style={{
+        position: 'fixed',
+        top: '24px',
+        right: '24px',
+        background: bgColor,
+        color: 'white',
+        padding: '16px 24px',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+        zIndex: 10000,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        animation: 'slideIn 0.3s ease',
+        minWidth: '300px'
+      }}>
+        {type === 'success' ? <CheckCircle size={20} /> : <AlertTriangle size={20} />}
+        <span style={{ fontSize: '14px', fontWeight: 600 }}>{message}</span>
+      </div>
+    );
+  };
 
 
 
@@ -286,6 +352,17 @@ const Monitor = () => {
       <style jsx>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+          from {
+            transform: translateX(400px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
         }
 
         @keyframes pulse {
@@ -720,6 +797,148 @@ const Monitor = () => {
           font-size: 12px;
           font-weight: 700;
           text-transform: uppercase;
+        }
+
+        .btn-icon-small {
+          width: 28px;
+          height: 28px;
+          border-radius: 8px;
+          background: #F5F5F5;
+          border: 1px solid #E8E8E8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #666;
+          transition: all 0.2s ease;
+        }
+
+        .btn-icon-small:hover {
+          background: #E8E8E8;
+          color: #000;
+          border-color: #000;
+        }
+
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.6);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+          padding: 24px;
+        }
+
+        .modal-content {
+          background: white;
+          padding: 32px;
+          border-radius: 20px;
+          max-width: 500px;
+          width: 100%;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+          margin-bottom: 24px;
+        }
+
+        .modal-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 8px;
+          letter-spacing: -0.5px;
+        }
+
+        .modal-subtitle {
+          font-size: 14px;
+          color: #666;
+        }
+
+        .modal-info {
+          padding: 20px;
+          background: #FAFAFA;
+          border-radius: 12px;
+          margin-bottom: 24px;
+          border: 1px solid #E8E8E8;
+        }
+
+        .modal-info p {
+          color: #666;
+          font-size: 13px;
+          line-height: 1.8;
+          margin: 0;
+        }
+
+        .form-group {
+          margin-bottom: 24px;
+        }
+
+        .form-label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 700;
+          color: #000;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 14px;
+          border: 2px solid #E8E8E8;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          outline: none;
+          transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+          border-color: #000;
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .btn-modal {
+          flex: 1;
+          padding: 14px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+        }
+
+        .btn-modal-dark {
+          background: #000;
+          color: white;
+        }
+
+        .btn-modal-dark:hover {
+          background: #333;
+        }
+
+        .btn-modal-cancel {
+          background: #F5F5F5;
+          color: #666;
+        }
+
+        .btn-modal-cancel:hover {
+          background: #E8E8E8;
         }
 
         .node-metrics {
