@@ -1393,6 +1393,59 @@ const Monitor = () => {
                   : `h₁ = ${nodeStats.find(n => n.name === selectedNodeView)?.h1_m || 0}m`}
               </div>
             </div>
+
+            {/* Edit Cable Length Modal */}
+            {editModal && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h2 className="modal-title">Edit Cable Length - {editModal.name}</h2>
+                    <p className="modal-subtitle">Update h₁ (cable length) for this node</p>
+                  </div>
+
+                  <div className="modal-info">
+                    <p>
+                      <strong>Current Values:</strong><br />
+                      • h₁ (Cable): {editModal.h1_m}m<br />
+                      Updating cable length will recalculate water height automatically.
+                    </p>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      New Cable Length (h₁) in meters <span style={{ color: '#DC2626' }}>*</span>
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={cableLength}
+                      onChange={(e) => setCableLength(e.target.value)}
+                      placeholder="Enter new cable length"
+                      className="form-input"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="modal-actions">
+                    <button onClick={handleUpdateCableLength} className="btn-modal btn-modal-dark">
+                      <CheckCircle size={16} />
+                      Update Cable Length
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditModal(null);
+                        setCableLength("");
+                      }}
+                      className="btn-modal btn-modal-cancel"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="nodes-grid">
               {nodeStats
                 .filter(node => {
@@ -1428,7 +1481,16 @@ const Monitor = () => {
                           <Droplets size={20} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: '16px', color: '#0F172A' }}>{node.name}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontWeight: 600, fontSize: '16px', color: '#0F172A' }}>{node.name}</div>
+                            <button
+                              className="btn-icon-small"
+                              onClick={() => handleEditCableLength(node)}
+                              title="Edit Cable Length"
+                            >
+                              <Edit size={14} />
+                            </button>
+                          </div>
                           <div style={{ fontSize: '12px', color: '#64748B' }}>Sensor ID: #{node.name.substring(0, 4)}...</div>
                         </div>
                       </div>
@@ -1552,8 +1614,9 @@ const Monitor = () => {
             </div>
           </div>
         </>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 
