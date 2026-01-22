@@ -19,7 +19,7 @@ body {
 #noVNC_screen {
   flex: 1;
   min-height: 0;
-  background: #000;
+  background: #00cf45bc;
 }
 .modal {
   position: fixed;

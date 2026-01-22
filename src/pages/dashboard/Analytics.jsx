@@ -463,7 +463,7 @@ const Analytics = () => {
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
-        <div style={{ width: '40px', height: '40px', border: '3px solid #F0F0F0', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
+        <div style={{ width: '40px', height: '40px', border: '3px solid #F0F0F0', borderTopColor: '#00cf45bc', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
         <p style={{ fontSize: '14px', color: '#666', fontWeight: 500 }}>Loading analytics...</p>
       </div>
     );

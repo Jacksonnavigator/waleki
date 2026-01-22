@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -55,14 +57,8 @@ const DashboardNavbar = () => {
     }
   };
 
-  const navLinks = [
-    { path: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { path: "/monitor", label: "Monitor", icon: <Activity size={18} /> },
-    { path: "/analytics", label: "Analytics", icon: <BarChart3 size={18} /> },
-    { path: "/health", label: "Health", icon: <Gauge size={18} /> },
-    // Pi Remote Desktop (noVNC)
-    { path: "/pi-remote-desktop", label: "Pi Remote Desktop", icon: <Zap size={18} /> },
-  ];
+  // Navigation links moved to sidebar
+  const navLinks = [];
 
   const isActivePath = (path) => location.pathname === path;
 
@@ -90,26 +86,45 @@ const DashboardNavbar = () => {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: white;
-          border-bottom: 1px solid #E8E8E8;
-          transition: all 0.3s ease;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          transition: all var(--transition-normal);
+          font-family: var(--font-primary);
+          height: var(--size-navbar-height);
         }
 
         .navbar-scrolled {
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+          box-shadow: var(--shadow-md);
           border-bottom-color: transparent;
         }
 
         .navbar-container {
-          max-width: 1600px;
-          margin: 0 auto;
-          padding: 0 32px;
-          height: 80px;
+          max-width: 100%;
+          margin: 0;
+          padding: 0 var(--spacing-xl);
+          height: var(--size-navbar-height);
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 40px;
+          gap: var(--spacing-2xl);
+          text-align: left;
+          width: 100%;
+        }
+
+        /* Left section - Logo */
+        .navbar-left {
+          display: flex;
+          align-items: center;
+          flex-shrink: 0;
+        }
+
+        /* Right section - All other elements */
+        .navbar-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-left: auto;
+          flex-shrink: 0;
         }
 
         /* Logo */
@@ -138,13 +153,13 @@ const DashboardNavbar = () => {
         .logo-text h1 {
           font-size: 20px;
           font-weight: 700;
-          color: #000;
+          color: white;
           letter-spacing: -0.5px;
         }
 
         .logo-text p {
           font-size: 11px;
-          color: #999;
+          color: rgba(255, 255, 255, 0.7);
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -165,37 +180,31 @@ const DashboardNavbar = () => {
           align-items: center;
           gap: 10px;
           padding: 12px 20px;
-          border-radius: 12px;
+          border-radius: var(--radius-md);
           font-size: 14px;
           font-weight: 600;
-          color: #666;
+          color: rgba(255, 255, 255, 0.7);
           text-decoration: none;
-          transition: all 0.2s ease;
+          transition: all var(--transition-fast);
           letter-spacing: -0.2px;
           position: relative;
         }
 
         .nav-link:hover {
-          background: #FAFAFA;
-          color: #000;
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
           transform: translateY(-1px);
         }
 
         .nav-link-active {
-          background: #000;
+          background: rgba(255, 255, 255, 0.2);
           color: white;
+          font-weight: 700;
         }
 
         .nav-link-active:hover {
-          background: #333;
+          background: rgba(255, 255, 255, 0.3);
           color: white;
-        }
-
-        /* Right Section */
-        .navbar-right {
-          display: flex;
-          align-items: center;
-          gap: 12px;
         }
 
         /* Time Display */
@@ -204,13 +213,20 @@ const DashboardNavbar = () => {
           align-items: center;
           gap: 8px;
           padding: 10px 16px;
-          background: #FAFAFA;
-          border-radius: 12px;
-          border: 1px solid #F0F0F0;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: var(--radius-md);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          transition: all var(--transition-fast);
+          cursor: default;
+        }
+        
+        .time-display:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: translateY(-1px);
         }
 
         .time-icon {
-          color: #666;
+          color: rgba(255, 255, 255, 0.7);
         }
 
         .time-text {
@@ -222,13 +238,13 @@ const DashboardNavbar = () => {
         .time-value {
           font-size: 13px;
           font-weight: 700;
-          color: #000;
+          color: white;
           letter-spacing: -0.2px;
         }
 
         .time-label {
           font-size: 10px;
-          color: #999;
+          color: rgba(255, 255, 255, 0.6);
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -239,20 +255,21 @@ const DashboardNavbar = () => {
           position: relative;
           width: 44px;
           height: 44px;
-          border-radius: 12px;
-          background: #FAFAFA;
-          border: 1px solid #F0F0F0;
+          border-radius: var(--radius-md);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s ease;
-          color: #666;
+          transition: all var(--transition-fast);
+          color: rgba(255, 255, 255, 0.7);
+          padding: var(--spacing-md);
         }
 
         .icon-btn:hover {
-          background: #F0F0F0;
-          color: #000;
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
           transform: translateY(-1px);
         }
 
@@ -260,16 +277,16 @@ const DashboardNavbar = () => {
           position: absolute;
           top: -6px;
           right: -6px;
-          background: #DC2626;
+          background: var(--color-error);
           color: white;
           font-size: 10px;
           font-weight: 700;
           padding: 3px 7px;
-          border-radius: 12px;
+          border-radius: var(--radius-md);
           min-width: 20px;
           text-align: center;
-          border: 2px solid white;
-          box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+          border: 2px solid var(--color-bg-secondary);
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
         }
 
         /* Profile */
@@ -280,32 +297,33 @@ const DashboardNavbar = () => {
         .profile-btn {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 6px 14px 6px 6px;
-          border-radius: 12px;
-          background: #FAFAFA;
-          border: 1px solid #F0F0F0;
+          gap: var(--spacing-md);
+          padding: var(--spacing-md);
+          border-radius: var(--radius-md);
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all var(--transition-fast);
+          text-decoration: none;
         }
 
         .profile-btn:hover {
-          background: #F0F0F0;
-          border-color: #E8E8E8;
+          background: rgba(255, 255, 255, 0.2);
+          border-color: rgba(255, 255, 255, 0.3);
           transform: translateY(-1px);
         }
 
         .profile-avatar {
           width: 36px;
           height: 36px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, #000 0%, #333 100%);
+          border-radius: var(--radius-md);
+          background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           overflow: hidden;
-          border: 2px solid white;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          border: 2px solid var(--color-border);
+          box-shadow: 0 2px 8px rgba(0, 188, 212, 0.15);
         }
 
         .profile-avatar img {
@@ -315,7 +333,7 @@ const DashboardNavbar = () => {
         }
 
         .profile-avatar span {
-          color: white;
+          color: var(--color-primary);
           font-size: 13px;
           font-weight: 700;
           letter-spacing: 0.5px;
@@ -331,13 +349,13 @@ const DashboardNavbar = () => {
         .profile-name {
           font-size: 14px;
           font-weight: 700;
-          color: #000;
+          color: white;
           letter-spacing: -0.2px;
         }
 
         .profile-role {
           font-size: 11px;
-          color: #999;
+          color: rgba(255, 255, 255, 0.7);
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -391,7 +409,7 @@ const DashboardNavbar = () => {
           width: 48px;
           height: 48px;
           border-radius: 12px;
-          background: linear-gradient(135deg, #000 0%, #333 100%);
+          background: linear-gradient(135deg, #00cf45bc 0%, #333 100%);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -449,7 +467,7 @@ const DashboardNavbar = () => {
 
         .dropdown-item:hover {
           background: #FAFAFA;
-          color: #000;
+          color: #00cf45bc;
           transform: translateX(2px);
         }
 
@@ -484,7 +502,7 @@ const DashboardNavbar = () => {
 
         .mobile-menu-btn:hover {
           background: #F0F0F0;
-          color: #000;
+          color: #00cf45bc;
         }
 
         /* Mobile Menu */
@@ -518,11 +536,11 @@ const DashboardNavbar = () => {
 
         .mobile-nav-link:hover {
           background: #FAFAFA;
-          color: #000;
+          color: #00cf45bc;
         }
 
         .mobile-nav-link-active {
-          background: #000;
+          background: #00cf45bc;
           color: white;
         }
 
@@ -546,7 +564,7 @@ const DashboardNavbar = () => {
           width: 48px;
           height: 48px;
           border-radius: 12px;
-          background: linear-gradient(135deg, #000 0%, #333 100%);
+          background: linear-gradient(135deg, #00cf45bc 0%, #333 100%);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -562,7 +580,7 @@ const DashboardNavbar = () => {
         .mobile-user-name {
           font-size: 15px;
           font-weight: 700;
-          color: #000;
+          color: #00cf45bc;
           margin-bottom: 2px;
         }
 
@@ -595,7 +613,7 @@ const DashboardNavbar = () => {
 
         .mobile-action:hover {
           background: #FAFAFA;
-          color: #000;
+          color: #00cf45bc;
         }
 
         .mobile-action.logout {
@@ -669,30 +687,20 @@ const DashboardNavbar = () => {
 
       <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
         <div className="navbar-container">
-          {/* Logo */}
-          <Link to="/dashboard" className="logo">
-            <div className="logo-icon">
-              <img src={WalekiLogo} alt="Waleki" />
-            </div>
-            <div className="logo-text">
-              <h1>Waleki</h1>
-              <p>Water Monitoring</p>
-            </div>
-          </Link>
-
-          {/* Desktop Nav Links */}
-          <div className="nav-links">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`nav-link ${isActivePath(link.path) ? 'nav-link-active' : ''}`}
-              >
-                {link.icon}
-                <span>{link.label}</span>
-              </Link>
-            ))}
+          {/* Left Section - Logo */}
+          <div className="navbar-left">
+            <Link to="/dashboard" className="logo">
+              <div className="logo-icon">
+                <img src={WalekiLogo || "/placeholder.svg"} alt="Waleki" />
+              </div>
+              <div className="logo-text">
+                <h1>Waleki</h1>
+                <p>Water Monitoring</p>
+              </div>
+            </Link>
           </div>
+
+          {/* Desktop Nav Links - Removed (moved to sidebar) */}
 
           {/* Right Section */}
           <div className="navbar-right">
@@ -729,7 +737,7 @@ const DashboardNavbar = () => {
               >
                 <div className="profile-avatar">
                   {currentUser?.photoURL ? (
-                    <img src={currentUser.photoURL} alt="Profile" />
+                    <img src={currentUser.photoURL || "/placeholder.svg"} alt="Profile" />
                   ) : (
                     <span>{getUserInitials()}</span>
                   )}
@@ -801,19 +809,7 @@ const DashboardNavbar = () => {
               </div>
             </div>
 
-            <div className="mobile-nav-links">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`mobile-nav-link ${isActivePath(link.path) ? 'mobile-nav-link-active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              ))}
-            </div>
+            {/* Mobile Nav Links - Removed (moved to sidebar) */}
             
             <div className="mobile-divider"></div>
             

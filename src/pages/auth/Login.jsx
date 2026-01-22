@@ -11,7 +11,7 @@ const Toast = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#000';
+  const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#00cf45bc';
   const Icon = type === 'success' ? CheckCircle : AlertCircle;
 
   return (
@@ -131,7 +131,7 @@ const Login = () => {
         /* Left Side - Slideshow */
         .login-left {
           flex: 1;
-          background: #000;
+          background: #00cf45bc;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -285,7 +285,7 @@ const Login = () => {
         .form-logo {
           width: 56px;
           height: 56px;
-          background: #000;
+          background: #00cf45bc;
           border-radius: 14px;
           display: flex;
           align-items: center;
@@ -304,7 +304,7 @@ const Login = () => {
         .form-title {
           font-size: 36px;
           font-weight: 700;
-          color: #000;
+          color:rgba(22, 0, 122, 0.74);
           margin-bottom: 10px;
           letter-spacing: -1px;
         }
@@ -401,12 +401,12 @@ const Login = () => {
         }
 
         .form-input:focus {
-          border-color: #000;
+          border-color: #00cf45bc;
           box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
         }
 
         .form-input:focus + .input-icon {
-          color: #000;
+          color: #00cf45bc;
         }
 
         .form-input::placeholder {
@@ -424,7 +424,7 @@ const Login = () => {
         .submit-button {
           width: 100%;
           padding: 18px;
-          background: #000;
+          background: #00cf45bc;
           color: white;
           border: none;
           border-radius: 12px;

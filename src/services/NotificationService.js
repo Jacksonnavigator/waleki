@@ -100,7 +100,14 @@ class NotificationService {
 
   updateNodeTimestamp(nodeId, timestamp) {
     const now = Date.now();
+    
+    // Validate the timestamp before processing
     const timestampMs = new Date(timestamp).getTime();
+    if (isNaN(timestampMs)) {
+      console.warn(`Invalid timestamp received for node ${nodeId}:`, timestamp);
+      return;
+    }
+    
     const previous = this.monitoring.get(nodeId);
 
     this.monitoring.set(nodeId, {
@@ -182,10 +189,13 @@ class NotificationService {
     const status = {};
 
     this.monitoring.forEach((data, id) => {
+      // Validate the timestamp before creating Date object
+      const isValidTimestamp = data.lastUpdate && !isNaN(new Date(data.lastUpdate).getTime());
+      
       status[id] = {
-        lastUpdate: new Date(data.lastUpdate).toISOString(),
-        minutesOffline: Math.floor((now - data.lastUpdate) / 60000),
-        isOnline: now - data.lastUpdate < this.TIMEOUT_MS
+        lastUpdate: isValidTimestamp ? new Date(data.lastUpdate).toISOString() : 'Invalid Date',
+        minutesOffline: isValidTimestamp ? Math.floor((now - data.lastUpdate) / 60000) : 0,
+        isOnline: isValidTimestamp ? now - data.lastUpdate < this.TIMEOUT_MS : false
       };
     });
 

@@ -14,7 +14,7 @@ const PageTransition = ({ children }) => {
       <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
         {/* Top Panel */}
         <motion.div
-          className="absolute top-0 left-0 w-full h-1/2 bg-black"
+          className="absolute top-0 left-0 w-full h-1/2 bg-[#00cf45bc]"
           initial={{ y: 0 }}          // start closed (covering)
           animate={{ y: "-100%" }}    // move up (open)
           exit={{ y: 0 }}             // move back down (close)
@@ -22,7 +22,7 @@ const PageTransition = ({ children }) => {
         />
         {/* Bottom Panel */}
         <motion.div
-          className="absolute bottom-0 left-0 w-full h-1/2 bg-black"
+          className="absolute bottom-0 left-0 w-full h-1/2 bg-[#00cf45bc]"
           initial={{ y: 0 }}          // start closed
           animate={{ y: "100%" }}     // move down (open)
           exit={{ y: 0 }}             // move back up (close)

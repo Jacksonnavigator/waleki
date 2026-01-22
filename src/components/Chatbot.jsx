@@ -112,7 +112,13 @@ const Chatbot = () => {
 
     // Yes / No responses
     if (lower === 'yes' || lower === 'yeah' || lower === 'yep' || lower === 'sure') {
-      return `Great! What would you like to know about? I can help with:\n• Adding nodes\n• Troubleshooting issues\n• Understanding calculations\n• System settings\n\nJust ask away! 😊`;
+      return `Great! What would you like to know about? I can help with:
+• Adding nodes
+• Troubleshooting issues
+• Understanding calculations
+• System settings
+
+Just ask away! 😊`;
     }
 
     if (lower === 'no' || lower === 'nope' || lower === 'nah') {
@@ -126,12 +132,44 @@ const Chatbot = () => {
 
     // Add node - detailed
     if (lower.match(/(add|create|setup|install|new).*(node|sensor|device)/)) {
-      return `Great! Let me walk you through adding a new sensor node! 🎯\n\n**Step-by-step:**\n1️⃣ Go to **Settings** → **Nodes tab**\n2️⃣ Scroll to the form at bottom\n3️⃣ Enter **Node ID** (like "Node4" or "Well-East")\n4️⃣ Enter **Cable Length (h₁)** in meters\n   📏 *This is SUPER important - measure carefully!*\n5️⃣ Add **Location** (e.g., "Mwanza Region")\n6️⃣ Check **"Activate immediately"** if ready\n7️⃣ Click **"Add Node"** button\n\n✅ Done! Your node will show up in the Dashboard!\n\nNeed help measuring cable length? Just ask! 😊`;
+      return `Great! Let me walk you through adding a new sensor node! 🎯
+
+**Step-by-step:**
+1️⃣ Go to **Settings** → **Nodes tab**
+2️⃣ Scroll to the form at bottom
+3️⃣ Enter **Node ID** (like "Node4" or "Well-East")
+4️⃣ Enter **Cable Length (h₁)** in meters
+   📏 *This is SUPER important - measure carefully!*
+5️⃣ Add **Location** (e.g., "Mwanza Region")
+6️⃣ Check **"Activate immediately"** if ready
+7️⃣ Click **"Add Node"** button
+
+✅ Done! Your node will show up in the Dashboard!
+
+Need help measuring cable length? Just ask! 😊`;
     }
 
     // Cable length / h1 - detailed
     if (lower.match(/(cable|h1|h₁|measure|length|depth)/)) {
-      return `Ah, cable length - the foundation of accurate readings! 📏\n\n**What is h₁?**\nIt's the total distance from ground surface to the END of your sensor cable.\n\n**Why is it critical?**\nWater Height = h₁ - h₂\n• h₁ = Your cable length (FIXED, you measure once)\n• h₂ = Sensor reading (CHANGES, real-time from sensor)\n• H = Actual water height (CALCULATED)\n\n**Example:**\n• Cable goes down 50 meters (h₁ = 50m)\n• Sensor reads 45m from surface (h₂ = 45m)\n• Water height = 50 - 45 = **5 meters of water** 💧\n\n**Pro tip:** If your water shows 0m but there IS water, your h₁ is probably too small! Remeasure and update it in Settings.\n\nMake sense? Let me know if you need clarification! 🤓`;
+      return `Ah, cable length - the foundation of accurate readings! 📏
+
+**What is h₁?**
+It's the total distance from ground surface to the END of your sensor cable.
+
+**Why is it critical?**
+Water Height = h₁ - h₂
+• h₁ = Your cable length (FIXED, you measure once)
+• h₂ = Sensor reading (CHANGES, real-time from sensor)
+• H = Actual water height (CALCULATED)
+
+**Example:**
+• Cable goes down 50 meters (h₁ = 50m)
+• Sensor reads 45m from surface (h₂ = 45m)
+• Water height = 50 - 45 = **5 meters of water** 💧
+
+**Pro tip:** If your water shows 0m but there IS water, your h₁ is probably too small! Remeasure and update it in Settings.
+
+Make sense? Let me know if you need clarification! 🤓`;
     }
 
     // Notifications / Alerts - detailed
@@ -141,7 +179,39 @@ const Chatbot = () => {
 
     // Offline sensor - detailed
     if (lower.match(/(offline|not working|down|disconnected|no signal|connection)/)) {
-      return `Sensor offline? Don't worry, let's troubleshoot! 🔧\n\n**Quick Checks:**\n\n1️⃣ **Power Supply**\n   ✓ Is the sensor powered on?\n   ✓ Check battery level\n   ✓ Solar panel clean and working?\n\n2️⃣ **Physical Connections**\n   ✓ All cables firmly connected?\n   ✓ No visible damage to wires?\n   ✓ Waterproof seals intact?\n\n3️⃣ **Sensor Position**\n   ✓ Is sensor within 5m of cable end?\n   ✓ Any obstructions?\n   ✓ Proper alignment?\n\n4️⃣ **Check System Logs**\n   📊 Go to **Health** → **System Logs**\n   Look for error messages\n\n5️⃣ **Network Range**\n   📡 Too far from gateway? (Max 2-15km)\n   Buildings blocking signal?\n\n**Still offline?**\nTry a soft reset: Power off → Wait 30s → Power on\n\nIf nothing works, our support team is ready! Contact: support@waleki.com\n\nHope this helps! 🤞`;
+      return `Sensor offline? Don't worry, let's troubleshoot! 🔧
+
+**Quick Checks:**
+
+1️⃣ **Power Supply**
+   ✓ Is the sensor powered on?
+   ✓ Check battery level
+   ✓ Solar panel clean and working?
+
+2️⃣ **Physical Connections**
+   ✓ All cables firmly connected?
+   ✓ No visible damage to wires?
+   ✓ Waterproof seals intact?
+
+3️⃣ **Sensor Position**
+   ✓ Is sensor within 5m of cable end?
+   ✓ Any obstructions?
+   ✓ Proper alignment?
+
+4️⃣ **Check System Logs**
+   📊 Go to **Health** → **System Logs**
+   Look for error messages
+
+5️⃣ **Network Range**
+   📡 Too far from gateway? (Max 2-15km)
+   Buildings blocking signal?
+
+**Still offline?**
+Try a soft reset: Power off → Wait 30s → Power on
+
+If nothing works, our support team is ready! Contact: support@waleki.com
+
+Hope this helps! 🤞`;
     }
 
     // Water shows 0m - detailed
@@ -151,17 +221,128 @@ const Chatbot = () => {
 
     // Backup / Export - detailed
     if (lower.match(/(backup|export|save|download|config)/)) {
-      return `Smart thinking - backups are crucial! 💾\n\n**To Backup Your Configuration:**\n\n1️⃣ Go to **Settings** → **Backup tab**\n2️⃣ Click the big **"Export"** button\n3️⃣ A JSON file downloads automatically\n   📁 Filename: waleki-config-[timestamp].json\n4️⃣ **Store it safely!**\n   • Google Drive\n   • Dropbox\n   • External hard drive\n   • USB stick\n\n**What's Included:**\n✓ All sensor node configurations\n✓ System settings\n✓ User preferences  \n✓ Alert thresholds\n✓ Notification settings\n\n**To Restore Later:**\n• Same tab, click **"Import"**\n• Select your backup file\n• Confirm (it will overwrite current settings)\n\n**Pro Tip:** Make backups:\n• Before major changes\n• Once a month\n• Before system updates\n\nYour future self will thank you! 🙏`;
+      return `Smart thinking - backups are crucial! 💾
+
+**To Backup Your Configuration:**
+
+1️⃣ Go to **Settings** → **Backup tab**
+2️⃣ Click the big **"Export"** button
+3️⃣ A JSON file downloads automatically
+   📁 Filename: waleki-config-[timestamp].json
+4️⃣ **Store it safely!**
+   • Google Drive
+   • Dropbox
+   • External hard drive
+   • USB stick
+
+**What's Included:**
+✓ All sensor node configurations
+✓ System settings
+✓ User preferences  
+✓ Alert thresholds
+✓ Notification settings
+
+**To Restore Later:**
+• Same tab, click **"Import"**
+• Select your backup file
+• Confirm (it will overwrite current settings)
+
+**Pro Tip:** Make backups:
+• Before major changes
+• Once a month
+• Before system updates
+
+Your future self will thank you! 🙏`;
     }
 
     // Dashboard / Pages / Navigation
     if (lower.match(/(dashboard|page|where|navigate|go to|find)/)) {
-      return `Let me give you a tour of Waleki! 🗺️\n\n**Main Pages:**\n\n🏠 **Dashboard** - Your home base\n   • See all active nodes at once\n   • Real-time water levels\n   • Status indicators\n   • Quick stats\n\n📊 **Monitor** - Deep dive single nodes\n   • Select specific node\n   • Live sensor data\n   • Detailed readings\n   • Historical mini-chart\n\n📈 **Analytics** - Data analysis paradise\n   • Compare multiple nodes\n   • Charts & graphs\n   • Export data (CSV/JSON)\n   • Custom date ranges\n\n🏥 **Health** - System diagnostics\n   • All nodes overview\n   • System logs\n   • Error tracking\n   • Performance metrics\n\n⚙️ **Settings** - Configuration central\n   • Add/edit nodes\n   • System settings\n   • Backup/restore\n   • Preferences\n\n👤 **Profile** - Your account\n   • Personal info\n   • Security settings\n   • Activity log\n   • Data export\n\n❓ **Help** - Knowledge base\n   • FAQs\n   • Tutorials\n   • Contact support\n\nWhere would you like to go? 😊`;
+      return `Let me give you a tour of Waleki! 🗺️
+
+**Main Pages:**
+
+🏠 **Dashboard** - Your home base
+   • See all active nodes at once
+   • Real-time water levels
+   • Status indicators
+   • Quick stats
+
+📊 **Monitor** - Deep dive single nodes
+   • Select specific node
+   • Live sensor data
+   • Detailed readings
+   • Historical mini-chart
+
+📈 **Analytics** - Data analysis paradise
+   • Compare multiple nodes
+   • Charts & graphs
+   • Export data (CSV/JSON)
+   • Custom date ranges
+
+🏥 **Health** - System diagnostics
+   • All nodes overview
+   • System logs
+   • Error tracking
+   • Performance metrics
+
+⚙️ **Settings** - Configuration central
+   • Add/edit nodes
+   • System settings
+   • Backup/restore
+   • Preferences
+
+👤 **Profile** - Your account
+   • Personal info
+   • Security settings
+   • Activity log
+   • Data export
+
+❓ **Help** - Knowledge base
+   • FAQs
+   • Tutorials
+   • Contact support
+
+Where would you like to go? 😊`;
     }
 
     // Status colors / Indicators
     if (lower.match(/(status|color|indicator|green|red|yellow|orange|meaning)/)) {
-      return `Let me decode those colors for you! 🎨\n\n**Node Status Colors:**\n\n🟢 **Active (Green)** - All good!\n   • Water level > 10 meters\n   • Sensor online & working\n   • No issues detected\n   • Keep monitoring normally\n\n🟡 **Warning (Yellow)** - Pay attention\n   • Water level 5-10 meters\n   • Still safe, but decreasing\n   • Monitor more frequently\n   • Consider water conservation\n\n🟠 **Low (Orange)** - Take action soon\n   • Water level 0-5 meters\n   • Getting critically low\n   • Plan alternative sources\n   • Alert relevant people\n\n🔴 **Critical (Red)** - Immediate action!\n   • Water ≤ 0 meters (empty/error)\n   • Sensor offline for 5+ minutes\n   • System error detected\n   • Check sensor immediately!\n\n⚪ **Inactive (Gray)** - Not monitoring\n   • Node exists but deactivated\n   • Not collecting data\n   • Enable in Settings if needed\n\n**Pro Tip:** You can customize these thresholds in Settings → System to match your specific needs!\n\nMake sense? 👍`;
+      return `Let me decode those colors for you! 🎨
+
+**Node Status Colors:**
+
+🟢 **Active (Green)** - All good!
+   • Water level > 10 meters
+   • Sensor online & working
+   • No issues detected
+   • Keep monitoring normally
+
+🟡 **Warning (Yellow)** - Pay attention
+   • Water level 5-10 meters
+   • Still safe, but decreasing
+   • Monitor more frequently
+   • Consider water conservation
+
+🟠 **Low (Orange)** - Take action soon
+   • Water level 0-5 meters
+   • Getting critically low
+   • Plan alternative sources
+   • Alert relevant people
+
+🔴 **Critical (Red)** - Immediate action!
+   • Water ≤ 0 meters (empty/error)
+   • Sensor offline for 5+ minutes
+   • System error detected
+   • Check sensor immediately!
+
+⚪ **Inactive (Gray)** - Not monitoring
+   • Node exists but deactivated
+   • Not collecting data
+   • Enable in Settings if needed
+
+**Pro Tip:** You can customize these thresholds in Settings → System to match your specific needs!
+
+Make sense? 👍`;
     }
 
     // Formula / Math / Calculation
@@ -429,7 +610,7 @@ const Chatbot = () => {
         }
 
         .message-avatar.bot {
-          background: #000;
+          background: #00cf45bc;
           color: white;
         }
 
@@ -454,7 +635,7 @@ const Chatbot = () => {
         }
 
         .message.user .message-content {
-          background: #000;
+          background: #00cf45bc;
           color: white;
         }
 
@@ -512,13 +693,13 @@ const Chatbot = () => {
         }
 
         .chat-input:focus {
-          border-color: #000;
+          border-color: #00cf45bc;
         }
 
         .send-btn {
           width: 44px;
           height: 44px;
-          background: #000;
+          background: #00cf45bc;
           color: white;
           border: none;
           border-radius: 12px;

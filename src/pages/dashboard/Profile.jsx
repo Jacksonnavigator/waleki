@@ -440,7 +440,7 @@ const ProfilePage = () => {
           width: 120px;
           height: 120px;
           border-radius: 24px;
-          background: linear-gradient(135deg, #000 0%, #333 100%);
+          background: linear-gradient(135deg, #00cf45bc 0%, #333 100%);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -893,7 +893,7 @@ const ProfilePage = () => {
           width: 40px;
           height: 40px;
           border-radius: 10px;
-          background: #000;
+          background: #00cf45bc;
           color: white;
           display: flex;
           align-items: center;
@@ -1067,7 +1067,7 @@ const ProfilePage = () => {
               onClick={() => fileInputRef.current?.click()}
               title="Change avatar"
             >
-              <Camera size={20} style={{ color: '#000' }} />
+              <Camera size={20} style={{ color: '#00cf45bc' }} />
             </button>
           </div>
 

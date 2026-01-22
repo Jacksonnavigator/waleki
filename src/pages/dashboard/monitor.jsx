@@ -402,7 +402,7 @@ const Monitor = () => {
         .header-icon {
           width: 48px;
           height: 48px;
-          background: #000;
+          background: #00cf45bc;
           border-radius: 12px;
           display: flex;
           align-items: center;
@@ -455,7 +455,7 @@ const Monitor = () => {
         }
 
         .btn-primary {
-          background: #000;
+          background: #00cf45bc;
           color: white;
         }
 
@@ -471,7 +471,7 @@ const Monitor = () => {
         }
 
         .btn-secondary:hover {
-          border-color: #000;
+          border-color: #00cf45bc;
         }
 
         .header-info {
@@ -609,7 +609,7 @@ const Monitor = () => {
         }
 
         .node-btn:hover {
-          border-color: #000;
+          border-color: #00cf45bc;
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
@@ -619,8 +619,8 @@ const Monitor = () => {
         }
 
         .node-btn-active {
-          border-color: #000;
-          background: #000;
+          border-color: #00cf45bc;
+          background: #00cf45bc;
         }
 
         .node-btn-active .node-btn-name {
@@ -698,7 +698,7 @@ const Monitor = () => {
         }
 
         .filter-btn-active {
-          background: #000;
+          background: green;
           color: white;
         }
 
@@ -712,7 +712,7 @@ const Monitor = () => {
         }
 
         .filter-input:focus {
-          border-color: #000;
+          border-color: #00cf45bc;
         }
 
         .filter-select {
@@ -748,7 +748,7 @@ const Monitor = () => {
 
         .section-badge {
           padding: 6px 12px;
-          background: #000;
+          background: #00cf45bc;
           color: white;
           border-radius: 8px;
           font-size: 12px;
@@ -815,8 +815,8 @@ const Monitor = () => {
 
         .btn-icon-small:hover {
           background: #E8E8E8;
-          color: #000;
-          border-color: #000;
+          color: #00cf45bc;
+          border-color: #00cf45bc;
         }
 
         .modal-overlay {

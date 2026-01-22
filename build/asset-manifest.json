@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ba444271.css",
+    "main.js": "/static/js/main.f1c90934.js",
+    "static/media/well-bg.jpg": "/static/media/well-bg.2357b30e0f022168a3a9.jpg",
+    "static/media/about-hero-bg.jpg": "/static/media/about-hero-bg.8eccf2c511067342046c.jpg",
+    "static/media/contacts-hero-bg.jpg": "/static/media/contacts-hero-bg.85f5426009f25e038ec5.jpg",
+    "static/media/bg2.jpg": "/static/media/bg2.fa2b7a9206d85b733366.jpg",
+    "static/media/bg1.jpg": "/static/media/bg1.bdc5d32e5f1ec3e7ca39.jpg",
+    "static/media/monitor-dashboard.jpg": "/static/media/monitor-dashboard.66e6747ff4b9bba2354e.jpg",
+    "static/media/services-hero-bg.jpg": "/static/media/services-hero-bg.9cce8abebb9d196adb7f.jpg",
+    "static/media/bg3.jpg": "/static/media/bg3.d66cec2fbd99c4ca0cd8.jpg",
+    "static/media/feature2.jpg": "/static/media/feature2.b4c7fe46533d41c63883.jpg",
+    "static/media/feature1.jpg": "/static/media/feature1.291f5dba5d14022ba251.jpg",
+    "static/media/about-well.png": "/static/media/about-well.da276e276096eb155d70.png",
+    "static/media/feature3.jpg": "/static/media/feature3.a61a8b811b310e26d220.jpg",
+    "static/media/water-splash.png": "/static/media/water-splash.219d3b2a010eeb304924.png",
+    "static/media/community-logo.png": "/static/media/community-logo.b4c73da963e161416fe6.png",
+    "static/media/waleki.png": "/static/media/waleki.361e2e806bb9e6960808.png",
+    "index.html": "/index.html",
+    "main.ba444271.css.map": "/static/css/main.ba444271.css.map",
+    "main.f1c90934.js.map": "/static/js/main.f1c90934.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ba444271.css",
+    "static/js/main.f1c90934.js"
+  ]
+}

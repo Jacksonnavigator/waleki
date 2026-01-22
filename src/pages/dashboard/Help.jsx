@@ -433,7 +433,7 @@ const HelpPage = () => {
           transition: all 0.2s ease;
           margin-bottom: 6px;
         }
-        .nav-item:hover { background: #F5F5F5; color: #000; }
+        .nav-item:hover { background: #F5F5F5; color: #00cf45bc; }
         .nav-item.active {
           background: linear-gradient(135deg, #0369a1, #0284c7);
           color: white;
@@ -453,7 +453,7 @@ const HelpPage = () => {
         }
         .quick-link-item:hover {
           background: white;
-          border-color: #000;
+          border-color: #00cf45bc;
         }
         .quick-link-icon {
           width: 36px;
@@ -549,8 +549,8 @@ const HelpPage = () => {
           color: #666;
         }
         .action-btn:hover {
-          border-color: #000;
-          color: #000;
+          border-color: #00cf45bc;
+          color: #00cf45bc;
         }
         .action-btn.active-positive {
           background: #DCFCE7;

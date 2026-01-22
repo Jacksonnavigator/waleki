@@ -24,7 +24,7 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
           left: 0;
           width: 100%;
           height: 100%;
-          background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+          background: white;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -64,13 +64,13 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .logo-badge {
           width: 120px;
           height: 120px;
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(10, 37, 64, 0.08);
           border-radius: 28px;
           display: flex;
           align-items: center;
           justify-content: center;
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(10, 37, 64, 0.1);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           animation: logoEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
           position: relative;
@@ -139,7 +139,7 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .brand-title {
           font-size: 48px;
           font-weight: 700;
-          color: white;
+          color: #0A2540;
           letter-spacing: -1px;
           margin: 0;
         }
@@ -147,15 +147,15 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .brand-subtitle {
           font-size: 16px;
           font-weight: 500;
-          color: rgba(255, 255, 255, 0.6);
+          color: #0A2540;
           letter-spacing: 0.5px;
         }
 
         .page-indicator {
           margin-top: 16px;
           padding: 8px 20px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #00cf45bc;
+          border: 1px solid rgba(0, 207, 69, 0.3);
           border-radius: 20px;
           backdrop-filter: blur(10px);
           animation: pageIndicatorEntry 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s backwards;
@@ -175,7 +175,7 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .page-name {
           font-size: 13px;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.9);
+          color: #0A2540;
           letter-spacing: 0.5px;
         }
 
@@ -191,14 +191,14 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .progress-bar-container {
           width: 240px;
           height: 4px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(10, 37, 64, 0.1);
           border-radius: 2px;
           overflow: hidden;
         }
 
         .progress-bar {
           height: 100%;
-          background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+          background: linear-gradient(90deg, rgba(0,207,69,0.3), rgba(0,207,69,0.8), rgba(0,207,69,0.3));
           background-size: 200% 100%;
           border-radius: 2px;
           animation: progressFlow 1.5s ease-in-out infinite;
@@ -218,14 +218,14 @@ const SplashScreen = ({ onComplete, minDisplayTime = 1200, pageName = 'Loading' 
         .loading-text {
           font-size: 14px;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.7);
+          color: #0A2540;
           letter-spacing: 0.5px;
         }
 
         .dot {
           width: 6px;
           height: 6px;
-          background: rgba(255, 255, 255, 0.6);
+          background: rgba(10, 37, 64, 0.6);
           border-radius: 50%;
           animation: dotPulse 1.4s ease-in-out infinite;
         }

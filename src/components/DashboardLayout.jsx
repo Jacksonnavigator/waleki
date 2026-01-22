@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import Sidebar from "./Sidebar";
 import DashboardNavbar from "./DashboardNavbar";
 import Chatbot from "./Chatbot";
 import "../styles/DashboardLayout.css";
@@ -36,24 +39,26 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="dashboard-layout">
-      {/* Sticky Navbar */}
+      {/* Top Navbar - Full Width */}
       <div className="dashboard-navbar-container">
         <DashboardNavbar />
       </div>
-
-      {/* Main Content Area */}
-      <main className="dashboard-main">
-        <div className="dashboard-content">
-          {children}
-        </div>
-      </main>
+      
+      {/* Main Content Area with Sidebar */}
+      <div className="dashboard-with-sidebar">
+        {/* Modern Sidebar Navigation */}
+        <Sidebar />
+        
+        {/* Page Content */}
+        <main className="dashboard-main with-sidebar-offset">
+          <div className="dashboard-content">
+            {children}
+          </div>
+        </main>
+      </div>
 
       {/* Floating Chatbot - Always visible on dashboard */}
       <Chatbot />
-
-      {/* Footer */}
-      <div className="dashboard-footer-container">
-      </div>
     </div>
   );
 };

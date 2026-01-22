@@ -73,14 +73,14 @@ const NotificationManager = () => {
 
         .notification-button:hover {
           background: #F0F0F0;
-          color: #000;
+          color: #00cf45bc;
           transform: translateY(-1px);
         }
 
         .notification-button.active {
-          background: #000;
+          background: #00cf45bc;
           color: white;
-          border-color: #000;
+          border-color: #00cf45bc;
         }
 
         .notification-badge {
@@ -175,7 +175,7 @@ const NotificationManager = () => {
 
         .close-btn:hover {
           background: #F0F0F0;
-          color: #000;
+          color: #00cf45bc;
         }
 
         /* Permission Section */
@@ -221,7 +221,7 @@ const NotificationManager = () => {
         .status-text h4 {
           font-size: 14px;
           font-weight: 700;
-          color: #000;
+          color: #00cf45bc;
           margin-bottom: 2px;
         }
 
@@ -233,7 +233,7 @@ const NotificationManager = () => {
         .enable-btn {
           width: 100%;
           padding: 12px;
-          background: #000;
+          background: #00cf45bc;
           color: white;
           border: none;
           border-radius: 10px;

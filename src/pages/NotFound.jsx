@@ -27,6 +27,50 @@ const NotFound = () => {
     };
   };
 
+
+
+
+
+  // Create a wrapper component to handle client-side rendering
+  const PupilElement = () => {
+    const [positions, setPositions] = useState({ left: { x: 0, y: 0 }, right: { x: 0, y: 0 } });
+      
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const leftPos = calculatePupilPosition(window.innerWidth / 2 - 140, 300);
+        const rightPos = calculatePupilPosition(window.innerWidth / 2 + 140, 300);
+        setPositions({ left: leftPos, right: rightPos });
+      }
+    }, [mousePosition]);
+      
+    return (
+      <>
+        <div 
+          id="left-pupil"
+          style={{
+            width: '80px',
+            height: '80px',
+            background: '#00cf45bc',
+            borderRadius: '50%',
+            transition: 'transform 0.1s ease',
+            transform: `translate(${positions.left.x}px, ${positions.left.y}px)`
+          }}
+        />
+        <div 
+          id="right-pupil"
+          style={{
+            width: '80px',
+            height: '80px',
+            background: '#00cf45bc',
+            borderRadius: '50%',
+            transition: 'transform 0.1s ease',
+            transform: `translate(${positions.right.x}px, ${positions.right.y}px)`
+          }}
+        />
+      </>
+    );
+  };
+    
   return (
     <DashboardLayout>
       <div style={{
@@ -62,19 +106,9 @@ const NotFound = () => {
               position: 'relative',
               boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)'
             }}>
-              <div 
-                id="left-pupil"
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  background: '#000',
-                  borderRadius: '50%',
-                  transition: 'transform 0.1s ease',
-                  transform: `translate(${calculatePupilPosition(window.innerWidth / 2 - 140, 300).x}px, ${calculatePupilPosition(window.innerWidth / 2 - 140, 300).y}px)`
-                }}
-              />
+              <PupilElement />
             </div>
-
+  
             {/* Right Eye */}
             <div style={{
               width: '200px',
@@ -87,17 +121,7 @@ const NotFound = () => {
               position: 'relative',
               boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)'
             }}>
-              <div 
-                id="right-pupil"
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  background: '#000',
-                  borderRadius: '50%',
-                  transition: 'transform 0.1s ease',
-                  transform: `translate(${calculatePupilPosition(window.innerWidth / 2 + 140, 300).x}px, ${calculatePupilPosition(window.innerWidth / 2 + 140, 300).y}px)`
-                }}
-              />
+              <PupilElement />
             </div>
           </div>
 
@@ -106,7 +130,7 @@ const NotFound = () => {
             fontSize: '48px',
             margin: '0 0 8px 0',
             fontWeight: '300',
-            color: '#000',
+            color: '#00cf45bc',
             letterSpacing: '2px',
             fontFamily: 'Georgia, serif'
           }}>
@@ -117,7 +141,7 @@ const NotFound = () => {
           <button
             onClick={() => navigate('/dashboard')}
             style={{
-              background: '#000',
+              background: '#00cf45bc',
               color: 'white',
               padding: '14px 40px',
               textDecoration: 'none',
@@ -139,7 +163,7 @@ const NotFound = () => {
               e.target.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = '#000';
+              e.target.style.background = '#00cf45bc';
               e.target.style.transform = 'scale(1)';
               e.target.style.boxShadow = 'none';
             }}

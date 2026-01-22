@@ -1,18 +1,21 @@
+'use client';
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Droplets, Activity, AlertTriangle, MapPin,
   ChevronRight, Eye, Edit, CheckCircle,
   XCircle, TrendingUp, RefreshCw,
-  BarChart3, Gauge, Settings, Waves, Sparkles
+  BarChart3, Gauge, Settings, Waves, Sparkles,
+  Zap, Target
 } from "lucide-react";
 import { ref, onValue, set } from "firebase/database";
 import { database } from "../../config/firebase";
 import notificationService from "../../services/NotificationService";
 import Tooltip from "../../components/Tooltip";
 import ValidationAlert from "../../components/ValidationAlert";
-// import ConnectionStatus from "../../components/ConnectionStatus"; // Future: Add to navbar
-// import AlertCenter from "../../components/AlertCenter"; // Future: Add to navbar
+import KPICard from "../../components/KPICard";
+import InsightCard from "../../components/InsightCard";
 import AnimatedNumber from "../../components/AnimatedNumber";
 // import SkeletonLoader from "../../components/SkeletonLoader"; // Future: Add to loading states
 
@@ -23,7 +26,7 @@ const Toast = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#000';
+  const bgColor = type === 'success' ? '#16A34A' : type === 'error' ? '#DC2626' : '#00cf45bc';
 
   return (
     <div style={{
@@ -352,7 +355,7 @@ const DashboardPage = () => {
           width: '40px',
           height: '40px',
           border: '3px solid #F0F0F0',
-          borderTopColor: '#000',
+          borderTopColor: '#00cf45bc',
           borderRadius: '50%',
           animation: 'spin 0.8s linear infinite'
         }}></div>
@@ -381,21 +384,23 @@ const DashboardPage = () => {
 
         .dashboard-page {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-          padding: 24px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          background: var(--color-bg);
+          padding: var(--spacing-2xl);
+          font-family: var(--font-primary);
+          color: var(--color-text);
+          transition: background-color var(--transition-normal);
         }
 
         /* Header */
         .dashboard-header {
-          background: rgba(255, 255, 255, 0.9);
+          background: var(--color-bg-secondary);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
-          border-radius: 24px;
-          padding: 32px;
-          margin-bottom: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          border-radius: var(--radius-xl);
+          padding: var(--spacing-2xl);
+          margin-bottom: var(--spacing-xl);
+          border: 1px solid var(--color-border);
+          box-shadow: var(--shadow-lg);
         }
 
         .header-top {
@@ -425,7 +430,7 @@ const DashboardPage = () => {
         .header-text h1 {
           font-size: 24px;
           font-weight: 700;
-          color: #000;
+          color: #00cf45bc;
           margin-bottom: 4px;
           letter-spacing: -0.5px;
         }
