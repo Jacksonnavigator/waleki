@@ -109,10 +109,24 @@ const Monitor = () => {
                   }
                 }
 
-                const parsedDate = new Date(timestamp);
+                let parsedDate = new Date(timestamp);
+
+                // Robust timestamp parsing
                 if (isNaN(parsedDate.getTime())) {
-                  console.warn(`Invalid timestamp: ${timestamp}`);
-                  return;
+                  // Try parsing as integer (Unix timestamp or ID)
+                  if (!isNaN(parseInt(timestamp))) {
+                    parsedDate = new Date(parseInt(timestamp));
+                  }
+                  // If still invalid, check if there's a Timestamp field in the reading object
+                  if (isNaN(parsedDate.getTime()) && reading.Timestamp) {
+                    parsedDate = new Date(reading.Timestamp);
+                  }
+
+                  // If completely failed
+                  if (isNaN(parsedDate.getTime())) {
+                    console.warn(`Invalid timestamp for node ${nodeKey}: ${timestamp}`);
+                    return;
+                  }
                 }
 
                 readings.push({
@@ -323,7 +337,7 @@ const Monitor = () => {
       case "active": return "#16A34A";
       case "warning": return "#D97706";
       case "critical": return "#DC2626";
-      case "inactive": return "#999";
+      case "inactive": return "#64748B"; // Slate-500 for pending
       default: return "#999";
     }
   };
@@ -333,9 +347,14 @@ const Monitor = () => {
       case "active": return <CheckCircle size={16} />;
       case "warning": return <AlertTriangle size={16} />;
       case "critical": return <XCircle size={16} />;
-      case "inactive": return <Activity size={16} />;
+      case "inactive": return <Clock size={16} />; // Clock for pending
       default: return <Activity size={16} />;
     }
+  };
+
+  const getStatusLabel = (status) => {
+    if (status === 'inactive') return 'Pending';
+    return status;
   };
 
   if (loading) {
@@ -1499,8 +1518,8 @@ const Monitor = () => {
                         borderRadius: '20px',
                         fontSize: '12px',
                         fontWeight: 600,
-                        background: node.activated ? '#DCFCE7' : '#F3F4F6',
-                        color: node.activated ? '#16A34A' : '#6B7280',
+                        background: node.activated ? (node.latestStatus === 'inactive' ? '#F1F5F9' : '#DCFCE7') : '#F3F4F6',
+                        color: node.activated ? (node.latestStatus === 'inactive' ? '#64748B' : '#16A34A') : '#6B7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px'
@@ -1511,7 +1530,7 @@ const Monitor = () => {
                           borderRadius: '50%',
                           background: 'currentColor'
                         }}></div>
-                        {node.latestStatus.toUpperCase()}
+                        {getStatusLabel(node.latestStatus).toUpperCase()}
                       </div>
                     </div>
 

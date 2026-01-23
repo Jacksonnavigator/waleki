@@ -280,10 +280,16 @@ const DashboardPage = () => {
     }
 
     try {
+      const h1_val = parseFloat(cableLength);
+      if (isNaN(h1_val)) {
+        showToast("Invalid cable length value", 'error');
+        return;
+      }
+
       const nodeConfigRef = ref(database, `config/nodes/${activationModal.id}`);
       await set(nodeConfigRef, {
         activated: true,
-        h1_m: parseFloat(cableLength)
+        h1_m: h1_val
       });
 
       setActivationModal(null);
