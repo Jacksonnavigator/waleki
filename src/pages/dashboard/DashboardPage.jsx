@@ -4,18 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Droplets, Activity, AlertTriangle, MapPin,
-  ChevronRight, Eye, Edit, CheckCircle,
-  XCircle, TrendingUp, RefreshCw,
-  BarChart3, Gauge, Settings, Waves, Sparkles,
-  Zap, Target
+  ChevronRight, Eye, CheckCircle,
+  XCircle, RefreshCw,
+  BarChart3, Gauge, Settings, Sparkles
 } from "lucide-react";
 import { ref, onValue, set } from "firebase/database";
 import { database } from "../../config/firebase";
 import notificationService from "../../services/NotificationService";
-import Tooltip from "../../components/Tooltip";
 import ValidationAlert from "../../components/ValidationAlert";
-import KPICard from "../../components/KPICard";
-import InsightCard from "../../components/InsightCard";
 import AnimatedNumber from "../../components/AnimatedNumber";
 // import SkeletonLoader from "../../components/SkeletonLoader"; // Future: Add to loading states
 
@@ -54,7 +50,6 @@ const Toast = ({ message, type, onClose }) => {
 
 const DashboardPage = () => {
   const [nodes, setNodes] = useState([]);
-  const [selectedNode, setSelectedNode] = useState(null);
   const [stats, setStats] = useState({
     totalNodes: 0,
     activeNodes: 0,
@@ -69,23 +64,6 @@ const DashboardPage = () => {
   const [cableLength, setCableLength] = useState("");
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [toast, setToast] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [alerts, setAlerts] = useState([
-    {
-      type: 'warning',
-      title: 'Low Water Level',
-      message: 'Node2 water level below 5m threshold',
-      timestamp: new Date().toISOString(),
-      read: false
-    },
-    {
-      type: 'info',
-      title: 'Node Activated',
-      message: 'Node4 has been successfully activated',
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      read: true
-    }
-  ]);
   const navigate = useNavigate();
 
   const showToast = (message, type = 'success') => {
@@ -138,17 +116,13 @@ const DashboardPage = () => {
 
     const unsubscribe = onValue(rootRef, (snapshot) => {
       console.log("📡 Firebase snapshot received");
-      setIsConnected(true);
       setLastUpdate(new Date());
 
       if (snapshot.exists()) {
         const data = snapshot.val();
         console.log("📊 Database structure:", Object.keys(data));
 
-        // Get selected node from config
-        if (data.config && data.config.selectedNode) {
-          setSelectedNode(data.config.selectedNode);
-        }
+
 
         // Process LoRaSensor data to extract nodes
         if (data.LoRaSensor && data.config && data.config.nodes) {
@@ -167,11 +141,23 @@ const DashboardPage = () => {
             // Update notification service with latest timestamp
             notificationService.updateNodeTimestamp(nodeKey, latestTimestamp);
 
-            // Parse RawData string
+            // Parse RawData string or get direct depth_m
             let depth_m = 0;
+            const reading = latestReading;
 
-            if (latestReading.RawData && typeof latestReading.RawData === 'string') {
-              const depthMatch = latestReading.RawData.match(/Depth=([\d.]+)m/);
+            // 1. Try checking direct numeric fields
+            if (reading.depth_m !== undefined) depth_m = parseFloat(reading.depth_m);
+            else if (reading.Depth !== undefined) depth_m = parseFloat(reading.Depth);
+            else if (reading.depth !== undefined) depth_m = parseFloat(reading.depth);
+            else if (reading.H2 !== undefined) depth_m = parseFloat(reading.H2);
+            else if (reading.h2 !== undefined) depth_m = parseFloat(reading.h2);
+
+            // 2. If still 0 (or undefined), try RawData string parsing
+            if ((!depth_m || depth_m === 0) && reading.RawData && typeof reading.RawData === 'string') {
+              let depthMatch = reading.RawData.match(/Depth\s*[=:]\s*([\d.]+)/i);
+              if (!depthMatch) {
+                depthMatch = reading.RawData.match(/D\s*[=:]\s*([\d.]+)/i);
+              }
               if (depthMatch) depth_m = parseFloat(depthMatch[1]);
             }
 
@@ -185,7 +171,28 @@ const DashboardPage = () => {
             // Water Height = h2_m - h1_m (water above cable end)
             // If h2 > h1, sensor is deeper than cable = ERROR/NO WATER
 
+            // If h2 > h1, sensor is deeper than cable = ERROR/NO WATER
+
             const h2_m = depth_m; // Sensor reading (depth from surface)
+
+            // Parse Timestamp
+            let parsedDate = new Date(latestTimestamp);
+            if (isNaN(parsedDate.getTime())) {
+              // Handle format: YYYY-MM-DD_HH-mm-ss
+              if (latestTimestamp.includes('_') && latestTimestamp.includes('-')) {
+                const parts = latestTimestamp.split('_');
+                if (parts.length === 2) {
+                  const datePart = parts[0];
+                  const timePart = parts[1].replace(/-/g, ':');
+                  const isoString = `${datePart}T${timePart}`;
+                  parsedDate = new Date(isoString);
+                }
+              }
+              // Fallback / checks
+              if (isNaN(parsedDate.getTime()) && !isNaN(parseInt(latestTimestamp))) {
+                parsedDate = new Date(parseInt(latestTimestamp));
+              }
+            }
             let waterHeight = 0;
             let status = "Not Activated";
 
@@ -226,6 +233,7 @@ const DashboardPage = () => {
               region: "Arusha",
               depth_m: depth_m,
               lastUpdate: latestTimestamp,
+              lastUpdateDate: parsedDate,
               readingsCount: timestamps.length
             });
           });
@@ -235,7 +243,6 @@ const DashboardPage = () => {
           setLastUpdate(new Date());
         }
       }
-
       setLoading(false);
     }, (error) => {
       console.error("❌ Firebase error:", error);
@@ -301,11 +308,7 @@ const DashboardPage = () => {
     }
   };
 
-  // Edit cable length with modal instead of prompt
-  const handleEditCableLength = (node) => {
-    setEditModal(node);
-    setCableLength(node.h1_m.toString());
-  };
+
 
   const handleUpdateCableLength = async () => {
     if (!cableLength || parseFloat(cableLength) <= 0) {
@@ -1569,7 +1572,7 @@ const DashboardPage = () => {
                   <div className="quick-info">
                     <div className="info-item">
                       <span className="info-label">Last Updated</span>
-                      <span className="info-value">{new Date(node.lastUpdate).toLocaleTimeString()}</span>
+                      <span className="info-value">{node.lastUpdateDate && !isNaN(node.lastUpdateDate) ? node.lastUpdateDate.toLocaleTimeString() : 'N/A'}</span>
                     </div>
                     <div className="info-item">
                       <span className="info-label">Readings Today</span>

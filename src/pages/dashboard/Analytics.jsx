@@ -75,9 +75,19 @@ const Analytics = () => {
 
                 let depth_m = 0;
 
-                // Parse RawData string
-                if (reading.RawData && typeof reading.RawData === 'string') {
-                  const depthMatch = reading.RawData.match(/Depth=([\d.]+)m/);
+                // 1. Try checking direct numeric fields
+                if (reading.depth_m !== undefined) depth_m = parseFloat(reading.depth_m);
+                else if (reading.Depth !== undefined) depth_m = parseFloat(reading.Depth);
+                else if (reading.depth !== undefined) depth_m = parseFloat(reading.depth);
+                else if (reading.H2 !== undefined) depth_m = parseFloat(reading.H2);
+                else if (reading.h2 !== undefined) depth_m = parseFloat(reading.h2);
+
+                // 2. If still 0 (or undefined), try RawData string parsing
+                if ((!depth_m || depth_m === 0) && reading.RawData && typeof reading.RawData === 'string') {
+                  let depthMatch = reading.RawData.match(/Depth\s*[=:]\s*([\d.]+)/i);
+                  if (!depthMatch) {
+                    depthMatch = reading.RawData.match(/D\s*[=:]\s*([\d.]+)/i);
+                  }
                   if (depthMatch) depth_m = parseFloat(depthMatch[1]);
                 }
 
@@ -92,10 +102,35 @@ const Analytics = () => {
                   }
                 }
 
-                const parsedDate = new Date(timestamp);
+                let parsedDate = new Date(timestamp);
+
+                // Robust timestamp parsing
                 if (isNaN(parsedDate.getTime())) {
-                  console.warn(`Invalid timestamp: ${timestamp}`);
-                  return;
+                  // Handle format: YYYY-MM-DD_HH-mm-ss
+                  if (timestamp.includes('_') && timestamp.includes('-')) {
+                    const parts = timestamp.split('_');
+                    if (parts.length === 2) {
+                      const datePart = parts[0];
+                      const timePart = parts[1].replace(/-/g, ':');
+                      const isoString = `${datePart}T${timePart}`;
+                      parsedDate = new Date(isoString);
+                    }
+                  }
+
+                  // Try parsing as integer (Unix timestamp or ID)
+                  if (isNaN(parsedDate.getTime()) && !isNaN(parseInt(timestamp))) {
+                    parsedDate = new Date(parseInt(timestamp));
+                  }
+                  // If still invalid, check if there's a Timestamp field in the reading object
+                  if (isNaN(parsedDate.getTime()) && reading.Timestamp) {
+                    parsedDate = new Date(reading.Timestamp);
+                  }
+
+                  // If completely failed
+                  if (isNaN(parsedDate.getTime())) {
+                    console.warn(`Invalid timestamp for node ${nodeKey}: ${timestamp}`);
+                    return;
+                  }
                 }
 
                 readings.push({
@@ -115,7 +150,7 @@ const Analytics = () => {
         }
 
         // Sort by most recent first
-        readings.sort((a, b) => b.date - a.date);
+        readings.sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
 
         setAllReadings(readings);
         setAllNodes(nodesList);
@@ -383,7 +418,8 @@ const Analytics = () => {
     const headers = ["Node", "Timestamp", "Water Height (m)", "h1 (m)", "h2 (m)", "Depth (m)", "Activated"];
     const csvData = filteredData.map(r => [
       r.node,
-      new Date(r.timestamp).toLocaleString(),
+      r.date instanceof Date && !isNaN(r.date.getTime()) ? r.date.toLocaleString() : 'Invalid Date',
+      r.waterHeight,
       r.waterHeight,
       r.h1,
       r.h2,
@@ -464,7 +500,7 @@ const Analytics = () => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '16px' }}>
         <div style={{ width: '40px', height: '40px', border: '3px solid #F0F0F0', borderTopColor: '#00cf45bc', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
-        <p style={{ fontSize: '14px', color: '#666', fontWeight: 500 }}>Loading analytics...</p>
+        <p style={{ fontSize: '14px', color: '#666', fontWeight: 500 }}>Loading analytics (v2)...</p>
       </div>
     );
   }
@@ -1413,7 +1449,7 @@ const Analytics = () => {
                   {filteredData.slice(0, 100).map((reading) => (
                     <tr key={reading.id}>
                       <td className="node-name">{reading.node}</td>
-                      <td>{new Date(reading.timestamp).toLocaleString()}</td>
+                      <td>{reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}</td>
                       <td>{reading.waterHeight}</td>
                       <td>{reading.h1}</td>
                       <td>{reading.depth_m}</td>

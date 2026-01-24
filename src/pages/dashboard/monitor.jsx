@@ -75,9 +75,23 @@ const Monitor = () => {
 
                 let depth_m = 0;
 
-                // Parse RawData string
-                if (reading.RawData && typeof reading.RawData === 'string') {
-                  const depthMatch = reading.RawData.match(/Depth=([\d.]+)m/);
+                // 1. Try checking direct numeric fields (case-insensitive keys if possible, but manual check for common ones)
+                if (reading.depth_m !== undefined) depth_m = parseFloat(reading.depth_m);
+                else if (reading.Depth !== undefined) depth_m = parseFloat(reading.Depth);
+                else if (reading.depth !== undefined) depth_m = parseFloat(reading.depth);
+                else if (reading.H2 !== undefined) depth_m = parseFloat(reading.H2);
+                else if (reading.h2 !== undefined) depth_m = parseFloat(reading.h2);
+
+                // 2. If still 0 (or undefined), try RawData string parsing
+                if ((!depth_m || depth_m === 0) && reading.RawData && typeof reading.RawData === 'string') {
+                  // Try strict match first: Depth=1.23m
+                  let depthMatch = reading.RawData.match(/Depth\s*[=:]\s*([\d.]+)/i);
+
+                  // If no match, try finding just the number if the string is simple
+                  if (!depthMatch) {
+                    depthMatch = reading.RawData.match(/D\s*[=:]\s*([\d.]+)/i);
+                  }
+
                   if (depthMatch) depth_m = parseFloat(depthMatch[1]);
                 }
 
@@ -113,8 +127,22 @@ const Monitor = () => {
 
                 // Robust timestamp parsing
                 if (isNaN(parsedDate.getTime())) {
+                  // Handle format: YYYY-MM-DD_HH-mm-ss
+                  // Replace first "_" with "T" and last two "-" with ":"
+                  // Example: 2026-01-24_17-10-45 -> 2026-01-24T17:10:45
+                  if (timestamp.includes('_') && timestamp.includes('-')) {
+                    // Find the underscore
+                    const parts = timestamp.split('_');
+                    if (parts.length === 2) {
+                      const datePart = parts[0];
+                      const timePart = parts[1].replace(/-/g, ':');
+                      const isoString = `${datePart}T${timePart}`;
+                      parsedDate = new Date(isoString);
+                    }
+                  }
+
                   // Try parsing as integer (Unix timestamp or ID)
-                  if (!isNaN(parseInt(timestamp))) {
+                  if (isNaN(parsedDate.getTime()) && !isNaN(parseInt(timestamp))) {
                     parsedDate = new Date(parseInt(timestamp));
                   }
                   // If still invalid, check if there's a Timestamp field in the reading object
@@ -141,6 +169,7 @@ const Monitor = () => {
                   h2: parseFloat(h2_m.toFixed(2)),
                   depth_m: parseFloat(depth_m.toFixed(2)),
                   activated: nodeInfo.activated,
+                  rawData: JSON.stringify(reading), // Capture ENTIRE object for debug
                   region: "Arusha, Tanzania"
                 });
               });
@@ -268,7 +297,6 @@ const Monitor = () => {
     });
 
     return Object.values(stats);
-    return Object.values(stats);
   }, [allReadings, allNodes]);
 
   // Edit cable length
@@ -281,7 +309,7 @@ const Monitor = () => {
 
   const handleUpdateCableLength = async () => {
     if (!cableLength || parseFloat(cableLength) <= 0) {
-      showToast("Please enter a valid cable length", 'error');
+      alert("Please enter a valid cable length");
       return;
     }
 
@@ -298,7 +326,7 @@ const Monitor = () => {
     }
   };
 
-  // Toast component since it's not imported
+  // Toast component (inline)
   const Toast = ({ message, type, onClose }) => {
     useEffect(() => {
       const timer = setTimeout(onClose, 3000);
@@ -1609,7 +1637,7 @@ const Monitor = () => {
                     </div>
                     <div className="reading-time">
                       <Clock size={12} />
-                      {new Date(item.timestamp).toLocaleString()}
+                      {item.date ? item.date.toLocaleString() : 'Invalid Date'}
                     </div>
                   </div>
                   <div className="reading-metrics">
@@ -1628,6 +1656,7 @@ const Monitor = () => {
                       <div className="reading-metric-value">{item.h2}m</div>
                     </div>
                   </div>
+                  {/* Debug: Show Raw Data - REMOVED after fix */}
                 </div>
               ))}
             </div>
@@ -1635,6 +1664,14 @@ const Monitor = () => {
         </>
       )
       }
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div >
   );
 };
