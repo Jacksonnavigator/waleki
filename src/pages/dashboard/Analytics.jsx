@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useTransition } from "react";
 import {
   BarChart3, TrendingUp, Calendar, Filter,
   Activity, Droplets, RefreshCw,
@@ -30,6 +30,20 @@ const Analytics = () => {
   const [selectedNode, setSelectedNode] = useState("all");
   const [chartType, setChartType] = useState("area");
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [isPending, startTransition] = useTransition();
+
+  // Optimized Filter handlers
+  const handleTimeRangeChange = (newRange) => {
+    startTransition(() => {
+      setTimeRange(newRange);
+    });
+  };
+
+  const handleNodeChange = (newNode) => {
+    startTransition(() => {
+      setSelectedNode(newNode);
+    });
+  };
 
   // Fetch data from Firebase
   useEffect(() => {
@@ -168,175 +182,81 @@ const Analytics = () => {
     return () => unsubscribe();
   }, []);
 
-  // Filter data by time range and node
-  const filteredData = useMemo(() => {
-    let result = [...allReadings];
-
+  // Filter data by time range and node (with sampling for performance)
+  const { filteredData, samplingApplied, originalCount } = useMemo(() => {
+    let result = [];
     const now = new Date();
-    if (timeRange === "today") {
-      result = result.filter(r => r.date.toDateString() === now.toDateString());
-    } else if (timeRange === "week") {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      result = result.filter(r => r.date >= weekAgo);
-    } else if (timeRange === "month") {
-      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      result = result.filter(r => r.date >= monthAgo);
-    } else if (timeRange === "year") {
-      const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      result = result.filter(r => r.date >= yearAgo);
+    const nowTime = now.getTime();
+
+    // Efficient temporal filtering using timestamps
+    const getStartTime = () => {
+      if (timeRange === "today") return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      if (timeRange === "week") return nowTime - 7 * 24 * 60 * 60 * 1000;
+      if (timeRange === "month") return nowTime - 30 * 24 * 60 * 60 * 1000;
+      if (timeRange === "year") return nowTime - 365 * 24 * 60 * 60 * 1000;
+      return 0; // "all"
+    };
+
+    const startTime = getStartTime();
+
+    // Single pass for initial filtering
+    for (let i = 0; i < allReadings.length; i++) {
+      const r = allReadings[i];
+      const rTime = r.date.getTime();
+
+      if (rTime >= startTime && (selectedNode === "all" || r.node === selectedNode)) {
+        result.push(r);
+      }
     }
 
-    if (selectedNode !== "all") {
-      result = result.filter(r => r.node === selectedNode);
+    const totalFiltered = result.length;
+    let sampled = result;
+    let samplingFactor = 1;
+
+    // SMART SAMPLING: If data is massive, take every Nth record to keep Recharts fast
+    // 5000 is usually the threshold where SVG charts start to lag the DOM
+    if (totalFiltered > 5000) {
+      samplingFactor = Math.ceil(totalFiltered / 5000);
+      sampled = [];
+      for (let i = 0; i < result.length; i += samplingFactor) {
+        sampled.push(result[i]);
+      }
     }
-
-    return result;
-  }, [allReadings, timeRange, selectedNode]);
-
-  // Calculate statistics
-  const statistics = useMemo(() => {
-    if (filteredData.length === 0) {
-      return {
-        totalReadings: 0,
-        avgWaterHeight: 0,
-        maxWaterHeight: 0,
-        minWaterHeight: 0,
-        avgDepth: 0,
-        trend: 0,
-        activeNodes: 0
-      };
-    }
-
-    const activatedData = filteredData.filter(r => r.activated);
-
-    const avgWaterHeight = activatedData.length > 0
-      ? activatedData.reduce((sum, r) => sum + r.waterHeight, 0) / activatedData.length
-      : 0;
-    const avgDepth = filteredData.reduce((sum, r) => sum + r.depth_m, 0) / filteredData.length;
-    const maxWaterHeight = activatedData.length > 0
-      ? Math.max(...activatedData.map(r => r.waterHeight), 0)
-      : 0;
-    const minWaterHeight = activatedData.length > 0
-      ? Math.min(...activatedData.map(r => r.waterHeight), 0)
-      : 0;
-
-    // Calculate trend (compare first half vs second half)
-    const midPoint = Math.floor(activatedData.length / 2);
-    if (midPoint > 0) {
-      const firstHalf = activatedData.slice(midPoint);
-      const secondHalf = activatedData.slice(0, midPoint);
-      const firstAvg = firstHalf.reduce((sum, r) => sum + r.waterHeight, 0) / firstHalf.length;
-      const secondAvg = secondHalf.reduce((sum, r) => sum + r.waterHeight, 0) / secondHalf.length;
-      const trend = firstAvg !== 0 ? ((secondAvg - firstAvg) / firstAvg) * 100 : 0;
-
-      const uniqueNodes = new Set(filteredData.map(r => r.node));
-
-      return {
-        totalReadings: filteredData.length,
-        avgWaterHeight: avgWaterHeight.toFixed(2),
-        maxWaterHeight: maxWaterHeight.toFixed(2),
-        minWaterHeight: minWaterHeight.toFixed(2),
-        avgDepth: avgDepth.toFixed(2),
-        trend: trend.toFixed(1),
-        activeNodes: uniqueNodes.size
-      };
-    }
-
-    const uniqueNodes = new Set(filteredData.map(r => r.node));
 
     return {
-      totalReadings: filteredData.length,
-      avgWaterHeight: avgWaterHeight.toFixed(2),
-      maxWaterHeight: maxWaterHeight.toFixed(2),
-      minWaterHeight: minWaterHeight.toFixed(2),
-      avgDepth: avgDepth.toFixed(2),
-      trend: "0.0",
-      activeNodes: uniqueNodes.size
+      filteredData: sampled,
+      samplingApplied: samplingFactor > 1,
+      originalCount: totalFiltered
     };
-  }, [filteredData]);
+  }, [allReadings, timeRange, selectedNode]);
 
-  // Prepare time series data
-  const timeSeriesData = useMemo(() => {
-    if (filteredData.length === 0) return [];
+  // Consolidate data processing into a single pass where possible
+  const { statistics, nodeComparisonData, distributionData, hourlyDistribution, timeSeriesData } = useMemo(() => {
+    // Initial stats object
+    const stats = {
+      totalReadings: filteredData.length,
+      avgWaterHeight: 0,
+      maxWaterHeight: 0,
+      minWaterHeight: Infinity,
+      avgDepth: 0,
+      trend: "0.0",
+      activeNodes: 0
+    };
 
-    const grouped = {};
+    if (filteredData.length === 0) {
+      return {
+        statistics: { ...stats, minWaterHeight: 0 },
+        nodeComparisonData: [],
+        distributionData: [],
+        hourlyDistribution: [],
+        timeSeriesData: []
+      };
+    }
 
-    filteredData.forEach(reading => {
-      let key;
-      const date = reading.date;
-
-      if (timeRange === "today") {
-        // Group by hour: "HH:MM"
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        key = `${hours}:${minutes}`;
-      } else if (timeRange === "week") {
-        // Group by day/hour: "Mon D, HH:00"
-        const month = date.toLocaleString('en-US', { month: 'short' });
-        const day = date.getDate();
-        const hour = date.getHours().toString().padStart(2, '0');
-        key = `${month} ${day}, ${hour}:00`;
-      } else if (timeRange === "month") {
-        // Group by day: "Mon D"
-        const month = date.toLocaleString('en-US', { month: 'short' });
-        const day = date.getDate();
-        key = `${month} ${day}`;
-      } else if (timeRange === "year") {
-        // Group by month: "Mon YYYY"
-        const month = date.toLocaleString('en-US', { month: 'short' });
-        const year = date.getFullYear();
-        key = `${month} ${year}`;
-      } else {
-        // Group by date: "Mon D, YYYY"
-        const month = date.toLocaleString('en-US', { month: 'short' });
-        const day = date.getDate();
-        const year = date.getFullYear();
-        key = `${month} ${day}, ${year}`;
-      }
-
-      if (!grouped[key]) {
-        grouped[key] = {
-          time: key,
-          totalHeight: 0,
-          totalDepth: 0,
-          count: 0,
-          activatedCount: 0
-        };
-      }
-
-      if (reading.activated) {
-        grouped[key].totalHeight += reading.waterHeight;
-        grouped[key].activatedCount++;
-      }
-      grouped[key].totalDepth += reading.depth_m;
-      grouped[key].count++;
-    });
-
-    const result = Object.values(grouped)
-      .map(item => ({
-        time: item.time,
-        waterHeight: item.activatedCount > 0
-          ? parseFloat((item.totalHeight / item.activatedCount).toFixed(2))
-          : 0,
-        depth: parseFloat((item.totalDepth / item.count).toFixed(2))
-      }))
-      .reverse();
-
-    // Limit data points based on time range
-    const maxPoints = timeRange === "today" ? 24 :
-      timeRange === "week" ? 30 :
-        timeRange === "month" ? 30 :
-          timeRange === "year" ? 12 : 50;
-
-    return result.slice(-maxPoints);
-  }, [filteredData, timeRange]);
-
-  // Node comparison data
-  const nodeComparisonData = useMemo(() => {
-    const nodeStats = {};
-
+    // Node comparison & Distribution tracking
+    const nodeStatsMap = {};
     allNodes.forEach(node => {
-      nodeStats[node.name] = {
+      nodeStatsMap[node.name] = {
         name: node.name,
         readings: 0,
         avgHeight: 0,
@@ -345,62 +265,154 @@ const Analytics = () => {
       };
     });
 
+    // Time series grouping
+    const timeGrouped = {};
+
+    // Hourly distribution tracking
+    const hours = timeRange === "today"
+      ? Array.from({ length: 24 }, (_, i) => ({
+        hour: `${i.toString().padStart(2, '0')}:00`,
+        readings: 0
+      }))
+      : [];
+
+    let totalWaterHeight = 0;
+    let totalDepth = 0;
+    let activatedCount = 0;
+    const uniqueNodesSet = new Set();
+
+    // SINGLE PASS over filteredData
     filteredData.forEach(reading => {
-      if (nodeStats[reading.node]) {
-        nodeStats[reading.node].readings++;
-        if (reading.activated) {
-          nodeStats[reading.node].avgHeight += reading.waterHeight;
-          nodeStats[reading.node].activatedReadings++;
-        }
-        nodeStats[reading.node].avgDepth += reading.depth_m;
+      uniqueNodesSet.add(reading.node);
+      totalDepth += reading.depth_m;
+
+      if (reading.activated) {
+        activatedCount++;
+        totalWaterHeight += reading.waterHeight;
+
+        // Inline Max/Min instead of spread operator later
+        if (reading.waterHeight > stats.maxWaterHeight) stats.maxWaterHeight = reading.waterHeight;
+        if (reading.waterHeight < stats.minWaterHeight) stats.minWaterHeight = reading.waterHeight;
       }
+
+      // Update node-specific stats
+      if (nodeStatsMap[reading.node]) {
+        const ns = nodeStatsMap[reading.node];
+        ns.readings++;
+        if (reading.activated) {
+          ns.avgHeight += reading.waterHeight;
+          ns.activatedReadings++;
+        }
+        ns.avgDepth += reading.depth_m;
+      }
+
+      // Update hourly distribution
+      if (timeRange === "today") {
+        const hour = reading.date.getHours();
+        hours[hour].readings++;
+      }
+
+      // Time series grouping logic
+      let timeKey;
+      const date = reading.date;
+      if (timeRange === "today") {
+        timeKey = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      } else if (timeRange === "week") {
+        timeKey = `${date.toLocaleString('en-US', { month: 'short' })} ${date.getDate()}, ${date.getHours().toString().padStart(2, '0')}:00`;
+      } else if (timeRange === "month") {
+        timeKey = `${date.toLocaleString('en-US', { month: 'short' })} ${date.getDate()}`;
+      } else if (timeRange === "year") {
+        timeKey = `${date.toLocaleString('en-US', { month: 'short' })} ${date.getFullYear()}`;
+      } else {
+        timeKey = `${date.toLocaleString('en-US', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`;
+      }
+
+      if (!timeGrouped[timeKey]) {
+        timeGrouped[timeKey] = {
+          time: timeKey,
+          totalHeight: 0,
+          totalDepth: 0,
+          count: 0,
+          activatedCount: 0
+        };
+      }
+      if (reading.activated) {
+        timeGrouped[timeKey].totalHeight += reading.waterHeight;
+        timeGrouped[timeKey].activatedCount++;
+      }
+      timeGrouped[timeKey].totalDepth += reading.depth_m;
+      timeGrouped[timeKey].count++;
     });
 
-    return Object.values(nodeStats)
+    // Finalize stats
+    stats.avgWaterHeight = activatedCount > 0 ? (totalWaterHeight / activatedCount).toFixed(2) : "0.00";
+    stats.avgDepth = (totalDepth / filteredData.length).toFixed(2);
+    stats.maxWaterHeight = stats.maxWaterHeight.toFixed(2);
+    stats.minWaterHeight = stats.minWaterHeight === Infinity ? "0.00" : stats.minWaterHeight.toFixed(2);
+    stats.activeNodes = uniqueNodesSet.size;
+
+    // Calculate trend without additional slices/filters
+    const midPoint = Math.floor(filteredData.length / 2);
+    if (midPoint > 0) {
+      let firstHalfSum = 0, firstHalfCount = 0;
+      let secondHalfSum = 0, secondHalfCount = 0;
+
+      for (let i = 0; i < filteredData.length; i++) {
+        const r = filteredData[i];
+        if (!r.activated) continue;
+
+        if (i < midPoint) {
+          secondHalfSum += r.waterHeight;
+          secondHalfCount++;
+        } else {
+          firstHalfSum += r.waterHeight;
+          firstHalfCount++;
+        }
+      }
+
+      if (firstHalfCount > 0 && secondHalfCount > 0) {
+        const firstAvg = firstHalfSum / firstHalfCount;
+        const secondAvg = secondHalfSum / secondHalfCount;
+        const trendVal = firstAvg !== 0 ? ((secondAvg - firstAvg) / firstAvg) * 100 : 0;
+        stats.trend = trendVal.toFixed(1);
+      }
+    }
+
+    // Finalize node comparison data
+    const finalizedNodeComparison = Object.values(nodeStatsMap)
       .filter(node => node.readings > 0)
       .map(node => ({
         name: node.name,
         readings: node.readings,
-        avgHeight: node.activatedReadings > 0
-          ? parseFloat((node.avgHeight / node.activatedReadings).toFixed(2))
-          : 0,
+        avgHeight: node.activatedReadings > 0 ? parseFloat((node.avgHeight / node.activatedReadings).toFixed(2)) : 0,
         avgDepth: parseFloat((node.avgDepth / node.readings).toFixed(2))
       }));
-  }, [filteredData, allNodes]);
 
-  // Distribution data for pie chart
-  const distributionData = useMemo(() => {
-    const distribution = {};
-
-    filteredData.forEach(reading => {
-      if (!distribution[reading.node]) {
-        distribution[reading.node] = 0;
-      }
-      distribution[reading.node]++;
-    });
-
-    return Object.keys(distribution).map(node => ({
-      name: node,
-      value: distribution[node]
-    }));
-  }, [filteredData]);
-
-  // Hourly distribution (for today view)
-  const hourlyDistribution = useMemo(() => {
-    if (timeRange !== "today") return [];
-
-    const hours = Array.from({ length: 24 }, (_, i) => ({
-      hour: `${i.toString().padStart(2, '0')}:00`,
-      readings: 0
+    // Finalize distribution data
+    const finalizedDistribution = finalizedNodeComparison.map(node => ({
+      name: node.name,
+      value: node.readings
     }));
 
-    filteredData.forEach(reading => {
-      const hour = reading.date.getHours();
-      hours[hour].readings++;
-    });
+    // Finalize time series data
+    const maxPoints = timeRange === "today" ? 24 : timeRange === "week" ? 30 : timeRange === "month" ? 30 : timeRange === "year" ? 12 : 50;
+    const finalizedTimeSeries = Object.values(timeGrouped)
+      .map(item => ({
+        time: item.time,
+        waterHeight: item.activatedCount > 0 ? parseFloat((item.totalHeight / item.activatedCount).toFixed(2)) : 0,
+        depth: parseFloat((item.totalDepth / item.count).toFixed(2))
+      }))
+      .reverse()
+      .slice(-maxPoints);
 
-    return hours;
-  }, [filteredData, timeRange]);
+    return {
+      statistics: stats,
+      nodeComparisonData: finalizedNodeComparison,
+      distributionData: finalizedDistribution,
+      hourlyDistribution: hours,
+      timeSeriesData: finalizedTimeSeries
+    };
+  }, [filteredData, allNodes, timeRange]);
 
   // Radar chart data for multi-metric comparison - Unused
   // const radarData = useMemo(() => {
@@ -1061,7 +1073,20 @@ const Analytics = () => {
             </div>
             <div className="header-text">
               <h1>Advanced Analytics</h1>
-              <p>Comprehensive insights & trends • Last updated: {lastUpdate.toLocaleTimeString()}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <p>Comprehensive insights & trends • Last updated: {lastUpdate.toLocaleTimeString()}</p>
+                {isPending && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#FEF3C7', color: '#B45309', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
+                    <RefreshCw size={10} className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
+                    PROCESSING
+                  </div>
+                )}
+                {samplingApplied && !isPending && (
+                  <div style={{ background: '#DBEAFE', color: '#1E40AF', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
+                    SAMPLED ({originalCount.toLocaleString()} pts)
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="header-actions">
@@ -1088,8 +1113,9 @@ const Analytics = () => {
             {["today", "week", "month", "year", "all"].map((range) => (
               <button
                 key={range}
-                onClick={() => setTimeRange(range)}
+                onClick={() => handleTimeRangeChange(range)}
                 className={timeRange === range ? "filter-btn filter-btn-active" : "filter-btn filter-btn-inactive"}
+                style={{ opacity: isPending ? 0.6 : 1 }}
               >
                 {range.charAt(0).toUpperCase() + range.slice(1)}
               </button>
@@ -1104,8 +1130,9 @@ const Analytics = () => {
           </div>
           <select
             value={selectedNode}
-            onChange={(e) => setSelectedNode(e.target.value)}
+            onChange={(e) => handleNodeChange(e.target.value)}
             className="filter-select"
+            style={{ opacity: isPending ? 0.6 : 1 }}
           >
             <option value="all">All Nodes</option>
             {allNodes.map(node => (
