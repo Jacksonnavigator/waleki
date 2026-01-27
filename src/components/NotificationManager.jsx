@@ -363,6 +363,17 @@ const NotificationManager = () => {
             right: -100px;
           }
         }
+
+        /* Center notification panel below button on small devices */
+        @media (max-width: 768px) {
+          .notification-panel {
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            width: 350px;
+            max-width: calc(100vw - 32px);
+          }
+        }
       `}</style>
 
       <div className="notification-manager">

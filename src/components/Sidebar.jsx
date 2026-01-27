@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  ChevronRight, Menu, X, LayoutDashboard, Activity, BarChart3, 
-  Gauge, AlertCircle, Globe, Users, Settings, Zap, HelpCircle,
-  TrendingUp, Heart, MapPin
+  ChevronRight, Menu, LayoutDashboard, Activity, BarChart3, 
+  Gauge, AlertCircle, Users, Settings, Zap, HelpCircle,
+  TrendingUp, MapPin
 } from 'lucide-react';
-import WalekiLogo from '../assets/waleki.png';
 import '../styles/Sidebar.css';
 
-const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const Sidebar = ({ isCollapsed, onToggle }) => {
   const location = useLocation();
 
   const navItems = [
@@ -64,10 +62,10 @@ const Sidebar = () => {
         .sidebar {
           position: fixed;
           left: 0;
-          top: 0;
-          height: 100vh;
+          top: var(--size-navbar-height);
+          height: calc(100vh - var(--size-navbar-height));
           width: var(--size-sidebar);
-          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+          background: linear-gradient(180deg,rgb(0, 11, 97) 0%, rgba(0, 0, 224, 1) 35%,  rgb(77, 145, 255)  100%);
           border-right: 1px solid rgba(255, 255, 255, 0.1);
           display: flex;
           flex-direction: column;
@@ -82,12 +80,12 @@ const Sidebar = () => {
         }
 
         .sidebar-header {
-          padding: var(--spacing-lg) var(--spacing-md);
+          padding: var(--spacing-md);
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          min-height: var(--size-navbar-height);
+          justify-content: flex-end;
+          min-height: 60px;
         }
 
         .sidebar-logo {
@@ -376,34 +374,27 @@ const Sidebar = () => {
         @media (max-width: 768px) {
           .sidebar {
             position: fixed;
-            left: -100%;
-            top: 0;
-            height: 100vh;
-            width: var(--size-sidebar);
-            transition: left var(--transition-normal);
-            z-index: 999;
+            left: 0;
+            top: var(--size-navbar-height);
+            height: calc(100vh - var(--size-navbar-height));
+            width: var(--size-sidebar-collapsed);
+            transition: width var(--transition-normal);
+            z-index: 10;
           }
 
-          .sidebar.mobile-open {
-            left: 0;
+          .sidebar:not(.collapsed) {
+            position: absolute;
+            width: var(--size-sidebar);
+            z-index: 1000;
           }
         }
       `}</style>
 
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
-          <Link to="/dashboard" className="sidebar-logo">
-            <div className="logo-icon">
-              <img src={WalekiLogo || "/placeholder.svg"} alt="Waleki" />
-            </div>
-            <div className="logo-text">
-              <h2>Waleki</h2>
-              <p>Monitoring</p>
-            </div>
-          </Link>
           <button 
             className="toggle-btn"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={onToggle}
             title={isCollapsed ? 'Expand' : 'Collapse'}
           >
             {isCollapsed ? <ChevronRight size={16} /> : <Menu size={16} />}

@@ -10,6 +10,8 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { ref, onValue, set, update } from 'firebase/database';
 import { database } from '../../config/firebase';
+import '../../styles/monitor.css';
+import '../../styles/profile.css';
 
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -377,662 +379,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="profile-page">
-      <style jsx>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
-        @keyframes slideIn {
-          from {
-            transform: translateX(400px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        .profile-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-          padding: 24px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-        }
-
-        /* Header Card */
-        .profile-header {
-          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
-          border-radius: 24px;
-          padding: 48px;
-          margin-bottom: 24px;
-          color: white;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
-        }
-
-        .profile-header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          right: -20%;
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%);
-          border-radius: 50%;
-        }
-
-        .header-content {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          gap: 32px;
-        }
-
-        .avatar-section {
-          position: relative;
-        }
-
-        .avatar-large {
-          width: 120px;
-          height: 120px;
-          border-radius: 24px;
-          background: linear-gradient(135deg, #00cf45bc 0%, #333 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 48px;
-          font-weight: 700;
-          border: 4px solid rgba(255, 255, 255, 0.2);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-          overflow: hidden;
-        }
-
-        .avatar-large img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .avatar-upload-btn {
-          position: absolute;
-          bottom: -8px;
-          right: -8px;
-          width: 40px;
-          height: 40px;
-          border-radius: 12px;
-          background: white;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .avatar-upload-btn:hover {
-          transform: scale(1.1);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        }
-
-        .header-info {
-          flex: 1;
-        }
-
-        .header-name {
-          font-size: 32px;
-          font-weight: 700;
-          margin-bottom: 8px;
-          letter-spacing: -1px;
-        }
-
-        .header-role {
-          font-size: 16px;
-          opacity: 0.9;
-          margin-bottom: 16px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .header-stats {
-          display: flex;
-          gap: 32px;
-          margin-top: 20px;
-        }
-
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .stat-label {
-          font-size: 12px;
-          opacity: 0.7;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-          font-size: 24px;
-          font-weight: 700;
-        }
-
-        .header-actions {
-          display: flex;
-          gap: 12px;
-        }
-
-        .btn-header {
-          padding: 12px 24px;
-          border-radius: 12px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          border: none;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-        }
-
-        .btn-white {
-          background: white;
-          color: #000;
-        }
-
-        .btn-white:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-transparent {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-          backdrop-filter: blur(10px);
-        }
-
-        .btn-transparent:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Content Layout */
-        .profile-content {
-          display: grid;
-          grid-template-columns: 280px 1fr;
-          gap: 24px;
-        }
-
-        /* Sidebar */
-        .sidebar {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .sidebar-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-        }
-
-        .nav-item {
-          width: 100%;
-          padding: 14px 16px;
-          background: transparent;
-          border: none;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 14px;
-          font-weight: 600;
-          color: #666;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: left;
-        }
-
-        .nav-item:hover {
-          background: #FAFAFA;
-          color: #000;
-        }
-
-        .nav-item.active {
-          background: linear-gradient(135deg, #0369a1, #0284c7);
-          color: white;
-          box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
-        }
-
-        .quick-stats {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .quick-stat {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px;
-          background: #FAFAFA;
-          border-radius: 10px;
-        }
-
-        .quick-stat-info {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .quick-stat-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #666;
-        }
-
-        .quick-stat-label {
-          font-size: 12px;
-          color: #999;
-          margin-bottom: 2px;
-        }
-
-        .quick-stat-value {
-          font-size: 14px;
-          font-weight: 700;
-          color: #000;
-        }
-
-        /* Main Content */
-        .main-content {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 32px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        }
-
-        .content-header {
-          margin-bottom: 32px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid #F0F0F0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .content-title {
-          font-size: 20px;
-          font-weight: 700;
-          color: #000;
-          letter-spacing: -0.3px;
-        }
-
-        /* Form */
-        .form-section {
-          margin-bottom: 32px;
-        }
-
-        .section-title {
-          font-size: 16px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 20px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .form-group.full-width {
-          grid-column: 1 / -1;
-        }
-
-        .form-label {
-          font-size: 13px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 8px;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-        }
-
-        .form-input, .form-select, .form-textarea {
-          padding: 12px 16px;
-          border: 2px solid #E8E8E8;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 500;
-          outline: none;
-          transition: all 0.2s ease;
-          background: white;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-          border-color: #0369a1;
-          box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
-        }
-
-        .form-input:disabled, .form-select:disabled, .form-textarea:disabled {
-          background: #FAFAFA;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-
-        .form-textarea {
-          resize: vertical;
-          min-height: 100px;
-          font-family: inherit;
-        }
-
-        .input-wrapper {
-          position: relative;
-        }
-
-        .input-icon {
-          position: absolute;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          cursor: pointer;
-          color: #999;
-          transition: color 0.2s ease;
-        }
-
-        .input-icon:hover {
-          color: #000;
-        }
-
-        /* Buttons */
-        .form-actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 24px;
-        }
-
-        .btn {
-          padding: 12px 24px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          border: none;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-        }
-
-        .btn-dark {
-          background: linear-gradient(135deg, #0369a1, #0284c7);
-          color: white;
-          box-shadow: 0 4px 12px rgba(3, 105, 161, 0.25);
-        }
-
-        .btn-dark:hover {
-          background: linear-gradient(135deg, #0c4a6e, #0369a1);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(3, 105, 161, 0.35);
-        }
-
-        .btn-outline {
-          background: rgba(255, 255, 255, 0.8);
-          color: #0369a1;
-          border: 2px solid #e2e8f0;
-        }
-
-        .btn-outline:hover {
-          border-color: #0369a1;
-          background: white;
-        }
-
-        .btn-danger {
-          background: #DC2626;
-          color: white;
-        }
-
-        .btn-danger:hover {
-          background: #B91C1C;
-        }
-
-        .btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        /* Info Card */
-        .info-card {
-          padding: 20px;
-          background: #FAFAFA;
-          border-radius: 12px;
-          border: 1px solid #F0F0F0;
-          display: flex;
-          gap: 16px;
-        }
-
-        .info-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .info-icon.success {
-          background: #DCFCE7;
-          color: #16A34A;
-        }
-
-        .info-icon.warning {
-          background: #FEF3C7;
-          color: #D97706;
-        }
-
-        .info-icon.error {
-          background: #FEE2E2;
-          color: #DC2626;
-        }
-
-        .info-content h4 {
-          font-size: 14px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 4px;
-        }
-
-        .info-content p {
-          font-size: 13px;
-          color: #666;
-          line-height: 1.6;
-        }
-
-        /* Activity Log */
-        .activity-list {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .activity-item {
-          padding: 16px;
-          background: #FAFAFA;
-          border-radius: 12px;
-          border: 1px solid #F0F0F0;
-          display: flex;
-          gap: 16px;
-        }
-
-        .activity-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          background: #00cf45bc;
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .activity-content {
-          flex: 1;
-        }
-
-        .activity-action {
-          font-size: 14px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 4px;
-        }
-
-        .activity-description {
-          font-size: 13px;
-          color: #666;
-          margin-bottom: 6px;
-        }
-
-        .activity-time {
-          font-size: 12px;
-          color: #999;
-        }
-
-        /* Security Badge */
-        .security-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
-          border-radius: 8px;
-          font-size: 12px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .security-badge.verified {
-          background: #DCFCE7;
-          color: #16A34A;
-        }
-
-        .security-badge.unverified {
-          background: #FEE2E2;
-          color: #DC2626;
-        }
-
-        /* Empty State */
-        .empty-state {
-          text-align: center;
-          padding: 60px 20px;
-        }
-
-        .empty-state svg {
-          margin: 0 auto 16px;
-          opacity: 0.3;
-        }
-
-        .empty-state h3 {
-          font-size: 16px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 8px;
-        }
-
-        .empty-state p {
-          font-size: 14px;
-          color: #666;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-          .profile-content {
-            grid-template-columns: 1fr;
-          }
-
-          .sidebar {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-          }
-
-          .sidebar-card {
-            grid-column: 1 / -1;
-          }
-
-          .form-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .header-content {
-            flex-direction: column;
-            text-align: center;
-          }
-
-          .header-stats {
-            justify-content: center;
-          }
-
-          .header-actions {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .profile-page {
-            padding: 16px;
-          }
-
-          .profile-header {
-            padding: 24px;
-          }
-
-          .main-content {
-            padding: 24px;
-          }
-
-          .header-name {
-            font-size: 24px;
-          }
-
-          .avatar-large {
-            width: 100px;
-            height: 100px;
-            font-size: 40px;
-          }
-
-          .header-stats {
-            gap: 20px;
-          }
-        }
-      `}</style>
-
+    <div className="monitor-page">
       {/* Toast */}
       {toast && (
         <Toast
@@ -1053,9 +400,9 @@ const ProfilePage = () => {
 
       {/* Header */}
       <div className="profile-header">
-        <div className="header-content">
-          <div className="avatar-section">
-            <div className="avatar-large">
+        <div className="profile-header-content">
+          <div className="profile-avatar-section">
+            <div className="profile-avatar-large">
               {profileData.photoURL ? (
                 <img src={profileData.photoURL} alt="Profile" />
               ) : (
@@ -1063,43 +410,43 @@ const ProfilePage = () => {
               )}
             </div>
             <button
-              className="avatar-upload-btn"
+              className="profile-avatar-upload-btn"
               onClick={() => fileInputRef.current?.click()}
               title="Change avatar"
             >
-              <Camera size={20} style={{ color: '#00cf45bc' }} />
+              <Camera size={16} style={{ color: '#00cf45bc' }} />
             </button>
           </div>
 
-          <div className="header-info">
-            <h1 className="header-name">{profileData.displayName}</h1>
-            <div className="header-role">
-              <Award size={16} />
+          <div className="profile-header-info">
+            <h1 className="profile-header-name">{profileData.displayName}</h1>
+            <div className="profile-header-role">
+              <Award size={14} />
               {profileData.role} • {profileData.department}
             </div>
-            <div className="header-stats">
-              <div className="stat-item">
-                <span className="stat-label">Member Since</span>
-                <span className="stat-value">{formatDate(profileData.joinDate).split(',')[1]}</span>
+            <div className="profile-header-stats">
+              <div className="profile-stat-item">
+                <span className="profile-stat-label">Member Since</span>
+                <span className="profile-stat-value">{formatDate(profileData.joinDate).split(',')[1]}</span>
               </div>
-              <div className="stat-item">
-                <span className="stat-label">Activities</span>
-                <span className="stat-value">{activityLog.length}</span>
+              <div className="profile-stat-item">
+                <span className="profile-stat-label">Activities</span>
+                <span className="profile-stat-value">{activityLog.length}</span>
               </div>
-              <div className="stat-item">
-                <span className="stat-label">Location</span>
-                <span className="stat-value">{profileData.country}</span>
+              <div className="profile-stat-item">
+                <span className="profile-stat-label">Location</span>
+                <span className="profile-stat-value">{profileData.country}</span>
               </div>
             </div>
           </div>
 
-          <div className="header-actions">
-            <button className="btn-header btn-white" onClick={() => navigate('/settings')}>
-              <Settings size={16} />
+          <div className="profile-header-actions">
+            <button className="profile-btn-header profile-btn-white" onClick={() => navigate('/settings')}>
+              <Settings size={14} />
               Settings
             </button>
-            <button className="btn-header btn-transparent" onClick={handleExportData}>
-              <Download size={16} />
+            <button className="profile-btn-header profile-btn-transparent" onClick={handleExportData}>
+              <Download size={14} />
               Export Data
             </button>
           </div>
@@ -1109,85 +456,85 @@ const ProfilePage = () => {
       {/* Content */}
       <div className="profile-content">
         {/* Sidebar */}
-        <div className="sidebar">
-          <div className="sidebar-card">
+        <div className="profile-sidebar">
+          <div className="profile-sidebar-card">
             <button
-              className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
+              className={`profile-nav-item ${activeTab === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveTab('profile')}
             >
-              <User size={18} />
+              <User size={16} />
               <span>Profile Info</span>
             </button>
 
             <button
-              className={`nav-item ${activeTab === 'security' ? 'active' : ''}`}
+              className={`profile-nav-item ${activeTab === 'security' ? 'active' : ''}`}
               onClick={() => setActiveTab('security')}
             >
-              <Shield size={18} />
+              <Shield size={16} />
               <span>Security</span>
             </button>
 
             <button
-              className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`}
+              className={`profile-nav-item ${activeTab === 'activity' ? 'active' : ''}`}
               onClick={() => setActiveTab('activity')}
             >
-              <Activity size={18} />
+              <Activity size={16} />
               <span>Activity Log</span>
             </button>
 
             <button
-              className={`nav-item ${activeTab === 'danger' ? 'active' : ''}`}
+              className={`profile-nav-item ${activeTab === 'danger' ? 'active' : ''}`}
               onClick={() => setActiveTab('danger')}
             >
-              <AlertTriangle size={18} />
+              <AlertTriangle size={16} />
               <span>Danger Zone</span>
             </button>
           </div>
 
           {/* Quick Stats */}
-          <div className="sidebar-card">
-            <div className="quick-stats">
-              <div className="quick-stat">
-                <div className="quick-stat-info">
-                  <div className="quick-stat-icon">
-                    <Mail size={16} />
+          <div className="profile-sidebar-card">
+            <div className="profile-quick-stats">
+              <div className="profile-quick-stat">
+                <div className="profile-quick-stat-info">
+                  <div className="profile-quick-stat-icon">
+                    <Mail size={14} />
                   </div>
                   <div>
-                    <div className="quick-stat-label">Email Status</div>
-                    <div className="quick-stat-value">
+                    <div className="profile-quick-stat-label">Email Status</div>
+                    <div className="profile-quick-stat-value">
                       {securitySettings.emailVerified ? 'Verified' : 'Unverified'}
                     </div>
                   </div>
                 </div>
                 {securitySettings.emailVerified ? (
-                  <CheckCircle size={16} style={{ color: '#16A34A' }} />
+                  <CheckCircle size={14} style={{ color: '#16A34A' }} />
                 ) : (
-                  <X size={16} style={{ color: '#DC2626' }} />
+                  <X size={14} style={{ color: '#DC2626' }} />
                 )}
               </div>
 
-              <div className="quick-stat">
-                <div className="quick-stat-info">
-                  <div className="quick-stat-icon">
-                    <Shield size={16} />
+              <div className="profile-quick-stat">
+                <div className="profile-quick-stat-info">
+                  <div className="profile-quick-stat-icon">
+                    <Shield size={14} />
                   </div>
                   <div>
-                    <div className="quick-stat-label">2FA Status</div>
-                    <div className="quick-stat-value">
+                    <div className="profile-quick-stat-label">2FA Status</div>
+                    <div className="profile-quick-stat-value">
                       {securitySettings.twoFactorEnabled ? 'Enabled' : 'Disabled'}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="quick-stat">
-                <div className="quick-stat-info">
-                  <div className="quick-stat-icon">
-                    <Clock size={16} />
+              <div className="profile-quick-stat">
+                <div className="profile-quick-stat-info">
+                  <div className="profile-quick-stat-icon">
+                    <Clock size={14} />
                   </div>
                   <div>
-                    <div className="quick-stat-label">Last Login</div>
-                    <div className="quick-stat-value">
+                    <div className="profile-quick-stat-label">Last Login</div>
+                    <div className="profile-quick-stat-value">
                       {formatRelativeTime(new Date().toISOString())}
                     </div>
                   </div>
@@ -1198,15 +545,15 @@ const ProfilePage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="main-content">
+        <div className="profile-main-content">
           {/* PROFILE TAB */}
           {activeTab === 'profile' && (
             <>
-              <div className="content-header">
-                <h2 className="content-title">Profile Information</h2>
+              <div className="profile-content-header">
+                <h2 className="profile-content-title">Profile Information</h2>
                 {!editingProfile ? (
                   <button
-                    className="btn btn-dark"
+                    className="profile-btn profile-btn-primary"
                     onClick={() => {
                       setEditingProfile(true);
                       setTempProfileData({ ...profileData });
@@ -1218,7 +565,7 @@ const ProfilePage = () => {
                 ) : (
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <button
-                      className="btn btn-dark"
+                      className="profile-btn profile-btn-primary"
                       onClick={handleSaveProfile}
                       disabled={saving}
                     >
@@ -1226,7 +573,7 @@ const ProfilePage = () => {
                       {saving ? 'Saving...' : 'Save Changes'}
                     </button>
                     <button
-                      className="btn btn-outline"
+                      className="profile-btn profile-btn-secondary"
                       onClick={() => {
                         setEditingProfile(false);
                         setTempProfileData({});
@@ -1239,29 +586,29 @@ const ProfilePage = () => {
                 )}
               </div>
 
-              <div className="form-section">
-                <h3 className="section-title">
+              <div className="profile-form-section">
+                <h3 className="profile-section-title">
                   <User size={18} />
                   Personal Information
                 </h3>
 
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Full Name *</label>
+                <div className="profile-form-grid">
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">Full Name *</label>
                     <input
                       type="text"
-                      className="form-input"
+                      className="profile-form-input"
                       value={editingProfile ? tempProfileData.displayName : profileData.displayName}
                       onChange={(e) => setTempProfileData({ ...tempProfileData, displayName: e.target.value })}
                       disabled={!editingProfile}
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Email Address *</label>
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">Email Address *</label>
                     <input
                       type="email"
-                      className="form-input"
+                      className="profile-form-input"
                       value={editingProfile ? tempProfileData.email : profileData.email}
                       onChange={(e) => setTempProfileData({ ...tempProfileData, email: e.target.value })}
                       disabled={!editingProfile}
@@ -1294,10 +641,10 @@ const ProfilePage = () => {
                     </select>
                   </div>
 
-                  <div className="form-group full-width">
-                    <label className="form-label">Bio</label>
+                  <div className="profile-form-group full-width">
+                    <label className="profile-form-label">Bio</label>
                     <textarea
-                      className="form-textarea"
+                      className="profile-form-textarea"
                       value={editingProfile ? tempProfileData.bio : profileData.bio}
                       onChange={(e) => setTempProfileData({ ...tempProfileData, bio: e.target.value })}
                       placeholder="Tell us about yourself..."
@@ -1307,13 +654,13 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="form-section">
-                <h3 className="section-title">
+              <div className="profile-form-section">
+                <h3 className="profile-section-title">
                   <MapPin size={18} />
                   Location & Timezone
                 </h3>
 
-                <div className="form-grid">
+                <div className="profile-form-grid">
                   <div className="form-group">
                     <label className="form-label">Location</label>
                     <input
@@ -1338,10 +685,10 @@ const ProfilePage = () => {
                     />
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Country</label>
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">Country</label>
                     <select
-                      className="form-select"
+                      className="profile-form-input"
                       value={editingProfile ? tempProfileData.country : profileData.country}
                       onChange={(e) => setTempProfileData({ ...tempProfileData, country: e.target.value })}
                       disabled={!editingProfile}
@@ -1353,10 +700,10 @@ const ProfilePage = () => {
                     </select>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Timezone</label>
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">Timezone</label>
                     <select
-                      className="form-select"
+                      className="profile-form-input"
                       value={editingProfile ? tempProfileData.timezone : profileData.timezone}
                       onChange={(e) => setTempProfileData({ ...tempProfileData, timezone: e.target.value })}
                       disabled={!editingProfile}
@@ -1374,29 +721,29 @@ const ProfilePage = () => {
           {/* SECURITY TAB */}
           {activeTab === 'security' && (
             <>
-              <div className="content-header">
-                <h2 className="content-title">Security Settings</h2>
+              <div className="profile-content-header">
+                <h2 className="profile-content-title">Security Settings</h2>
               </div>
 
-              <div className="form-section">
-                <h3 className="section-title">
+              <div className="profile-form-section">
+                <h3 className="profile-section-title">
                   <Key size={18} />
                   Change Password
                 </h3>
 
-                <div className="form-grid">
-                  <div className="form-group full-width">
-                    <label className="form-label">Current Password</label>
-                    <div className="input-wrapper">
+                <div className="profile-form-grid">
+                  <div className="profile-form-group profile-full-width">
+                    <label className="profile-form-label">Current Password</label>
+                    <div className="profile-input-wrapper">
                       <input
                         type={showPasswords.current ? 'text' : 'password'}
-                        className="form-input"
+                        className="profile-form-input"
                         value={passwordForm.currentPassword}
                         onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                         placeholder="Enter current password"
                       />
                       <span
-                        className="input-icon"
+                        className="profile-input-icon"
                         onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
                       >
                         {showPasswords.current ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -1404,18 +751,18 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">New Password</label>
-                    <div className="input-wrapper">
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">New Password</label>
+                    <div className="profile-input-wrapper">
                       <input
                         type={showPasswords.new ? 'text' : 'password'}
-                        className="form-input"
+                        className="profile-form-input"
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                         placeholder="Enter new password"
                       />
                       <span
-                        className="input-icon"
+                        className="profile-input-icon"
                         onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
                       >
                         {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -1423,18 +770,18 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Confirm New Password</label>
-                    <div className="input-wrapper">
+                  <div className="profile-form-group">
+                    <label className="profile-form-label">Confirm New Password</label>
+                    <div className="profile-input-wrapper">
                       <input
                         type={showPasswords.confirm ? 'text' : 'password'}
-                        className="form-input"
+                        className="profile-form-input"
                         value={passwordForm.confirmPassword}
                         onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                         placeholder="Confirm new password"
                       />
                       <span
-                        className="input-icon"
+                        className="profile-input-icon"
                         onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
                       >
                         {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -1443,9 +790,9 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                <div className="form-actions">
+                <div className="profile-form-actions">
                   <button
-                    className="btn btn-dark"
+                    className="profile-btn profile-btn-primary"
                     onClick={handleChangePassword}
                     disabled={saving}
                   >
@@ -1461,11 +808,11 @@ const ProfilePage = () => {
                   Security Status
                 </h3>
 
-                <div className="info-card">
-                  <div className={`info-icon ${securitySettings.emailVerified ? 'success' : 'warning'}`}>
+                <div className="profile-info-card">
+                  <div className={`profile-info-icon ${securitySettings.emailVerified ? 'success' : 'warning'}`}>
                     <Mail size={20} />
                   </div>
-                  <div className="info-content">
+                  <div className="profile-info-content">
                     <h4>Email Verification</h4>
                     <p>
                       {securitySettings.emailVerified
@@ -1473,35 +820,35 @@ const ProfilePage = () => {
                         : 'Please verify your email address to secure your account.'}
                     </p>
                     {!securitySettings.emailVerified && (
-                      <button className="btn btn-dark" style={{ marginTop: '12px' }}>
+                      <button className="profile-btn profile-btn-primary" style={{ marginTop: '12px' }}>
                         Verify Email
                       </button>
                     )}
                   </div>
                 </div>
 
-                <div className="info-card" style={{ marginTop: '16px' }}>
-                  <div className={`info-icon ${securitySettings.twoFactorEnabled ? 'success' : 'warning'}`}>
+                <div className="profile-info-card" style={{ marginTop: '16px' }}>
+                  <div className={`profile-info-icon ${securitySettings.twoFactorEnabled ? 'success' : 'warning'}`}>
                     <Smartphone size={20} />
                   </div>
-                  <div className="info-content">
+                  <div className="profile-info-content">
                     <h4>Two-Factor Authentication</h4>
                     <p>
                       {securitySettings.twoFactorEnabled
                         ? 'Two-factor authentication is enabled on your account.'
                         : 'Add an extra layer of security to your account.'}
                     </p>
-                    <button className="btn btn-dark" style={{ marginTop: '12px' }}>
+                    <button className="profile-btn profile-btn-primary" style={{ marginTop: '12px' }}>
                       {securitySettings.twoFactorEnabled ? 'Manage 2FA' : 'Enable 2FA'}
                     </button>
                   </div>
                 </div>
 
-                <div className="info-card" style={{ marginTop: '16px' }}>
-                  <div className="info-icon success">
+                <div className="profile-info-card" style={{ marginTop: '16px' }}>
+                  <div className="profile-info-icon success">
                     <Clock size={20} />
                   </div>
-                  <div className="info-content">
+                  <div className="profile-info-content">
                     <h4>Password Last Changed</h4>
                     <p>
                       {securitySettings.lastPasswordChange
@@ -1517,21 +864,21 @@ const ProfilePage = () => {
           {/* ACTIVITY TAB */}
           {activeTab === 'activity' && (
             <>
-              <div className="content-header">
-                <h2 className="content-title">Activity Log</h2>
+              <div className="profile-content-header">
+                <h2 className="profile-content-title">Activity Log</h2>
               </div>
 
               {activityLog.length > 0 ? (
-                <div className="activity-list">
+                <div className="profile-activity-list">
                   {activityLog.map((activity, index) => (
-                    <div key={index} className="activity-item">
-                      <div className="activity-icon">
+                    <div key={index} className="profile-activity-item">
+                      <div className="profile-activity-icon">
                         <Activity size={20} />
                       </div>
-                      <div className="activity-content">
-                        <div className="activity-action">{activity.action}</div>
-                        <div className="activity-description">{activity.description}</div>
-                        <div className="activity-time">
+                      <div className="profile-activity-content">
+                        <div className="profile-activity-action">{activity.action}</div>
+                        <div className="profile-activity-description">{activity.description}</div>
+                        <div className="profile-activity-time">
                           {formatDate(activity.timestamp)} • {formatRelativeTime(activity.timestamp)}
                         </div>
                       </div>
@@ -1539,7 +886,7 @@ const ProfilePage = () => {
                   ))}
                 </div>
               ) : (
-                <div className="empty-state">
+                <div className="profile-empty-state">
                   <Activity size={64} style={{ color: '#CCC' }} />
                   <h3>No Activity Yet</h3>
                   <p>Your account activity will appear here</p>
@@ -1551,22 +898,22 @@ const ProfilePage = () => {
           {/* DANGER ZONE TAB */}
           {activeTab === 'danger' && (
             <>
-              <div className="content-header">
-                <h2 className="content-title">Danger Zone</h2>
+              <div className="profile-content-header">
+                <h2 className="profile-content-title">Danger Zone</h2>
               </div>
 
-              <div className="info-card">
-                <div className="info-icon error">
+              <div className="profile-info-card">
+                <div className="profile-info-icon error">
                   <AlertTriangle size={20} />
                 </div>
-                <div className="info-content">
+                <div className="profile-info-content">
                   <h4>Delete Account</h4>
                   <p>
                     Once you delete your account, there is no going back. All your data will be permanently removed.
                     This action cannot be undone.
                   </p>
                   <button
-                    className="btn btn-danger"
+                    className="profile-btn profile-btn-danger"
                     onClick={handleDeleteAccount}
                     disabled={saving}
                     style={{ marginTop: '16px' }}
@@ -1577,17 +924,17 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="info-card" style={{ marginTop: '16px' }}>
-                <div className="info-icon warning">
+              <div className="profile-info-card" style={{ marginTop: '16px' }}>
+                <div className="profile-info-icon warning">
                   <Download size={20} />
                 </div>
-                <div className="info-content">
+                <div className="profile-info-content">
                   <h4>Export Your Data</h4>
                   <p>
                     Download a copy of your profile data, activity logs, and account information before deleting your account.
                   </p>
                   <button
-                    className="btn btn-dark"
+                    className="profile-btn profile-btn-primary"
                     onClick={handleExportData}
                     style={{ marginTop: '16px' }}
                   >

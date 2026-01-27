@@ -1,12 +1,29 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Activity, Signal, Droplets, AlertTriangle, CheckCircle,
-  XCircle, Clock
+  Clock, TrendingUp, Calendar, Info, Edit
 } from "lucide-react";
 import { ref, onValue, set } from "firebase/database";
 import { database } from "../../config/firebase";
-import Tooltip from "../../components/Tooltip";
-import { Edit } from "lucide-react";
+import "../../styles/monitor.css";
+
+// Local Tooltip for table
+const TableTooltip = ({ text }) => {
+  const [show, setShow] = useState(false);
+
+  return (
+    <span
+      className="monitor-tooltip-wrapper"
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <button className="monitor-tooltip-btn">
+        <Info />
+      </button>
+      {show && <span className="monitor-tooltip-content">{text}</span>}
+    </span>
+  );
+};
 // import { useNavigate } from "react-router-dom"; // Unused after header removal
 // Cleaned up unused import
 
@@ -368,21 +385,6 @@ const Monitor = () => {
       case "inactive": return "#64748B"; // Slate-500 for pending
       default: return "#999";
     }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "active": return <CheckCircle size={16} />;
-      case "warning": return <AlertTriangle size={16} />;
-      case "critical": return <XCircle size={16} />;
-      case "inactive": return <Clock size={16} />; // Clock for pending
-      default: return <Activity size={16} />;
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    if (status === 'inactive') return 'Pending';
-    return status;
   };
 
   if (loading) {
@@ -1429,12 +1431,12 @@ const Monitor = () => {
       ) : (
         <>
           {/* Node Status Cards */}
-          <div className="nodes-section">
-            <div className="section-header">
-              <div className="section-title">
+          <section className="monitor-nodes-section">
+            <div className="monitor-section-header">
+              <h2 className="monitor-section-title">
                 {selectedNodeView === "all" ? "All Nodes Status" : `${selectedNodeView} Status`}
-              </div>
-              <div className="section-badge">
+              </h2>
+              <div className="monitor-section-badge">
                 {selectedNodeView === "all"
                   ? `${nodeStats.filter(n => n.activated).length} active nodes`
                   : `h₁ = ${nodeStats.find(n => n.name === selectedNodeView)?.h1_m || 0}m`}
@@ -1493,7 +1495,7 @@ const Monitor = () => {
               </div>
             )}
 
-            <div className="nodes-grid">
+            <div className="monitor-nodes-grid">
               {nodeStats
                 .filter(node => {
                   // Show all activated nodes when "all" is selected, or just the selected node
@@ -1503,164 +1505,105 @@ const Monitor = () => {
                   return node.name === selectedNodeView;
                 })
                 .map((node) => (
-                  <div key={node.name} style={{
-                    background: 'white',
-                    borderRadius: '16px',
-                    padding: '20px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-                    border: '1px solid #E2E8F0',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '10px',
-                          background: node.activated ? '#DCFCE7' : '#F3F4F6',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: node.activated ? '#16A34A' : '#9CA3AF'
-                        }}>
-                          <Droplets size={20} />
+                  <div key={node.name} className="monitor-node-card">
+                    <div className="monitor-node-card-header">
+                      <div className="monitor-node-card-left">
+                        <div className="monitor-node-card-icon monitor-node-card-icon-sky">
+                          <Droplets />
                         </div>
                         <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ fontWeight: 600, fontSize: '16px', color: '#0F172A' }}>{node.name}</div>
-                            <button
-                              className="btn-icon-small"
-                              onClick={() => handleEditCableLength(node)}
-                              title="Edit Cable Length"
-                            >
-                              <Edit size={14} />
-                            </button>
-                          </div>
-                          <div style={{ fontSize: '12px', color: '#64748B' }}>Sensor ID: #{node.name.substring(0, 4)}...</div>
+                          <h3 className="monitor-node-card-name">{node.name}</h3>
+                          <p className="monitor-node-card-id">Sensor ID: #{node.name.substring(0, 4)}...</p>
                         </div>
                       </div>
-                      <div style={{
-                        padding: '4px 10px',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        background: node.activated ? (node.latestStatus === 'inactive' ? '#F1F5F9' : '#DCFCE7') : '#F3F4F6',
-                        color: node.activated ? (node.latestStatus === 'inactive' ? '#64748B' : '#16A34A') : '#6B7280',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}>
-                        <div style={{
-                          width: '6px',
-                          height: '6px',
-                          borderRadius: '50%',
-                          background: 'currentColor'
-                        }}></div>
-                        {getStatusLabel(node.latestStatus).toUpperCase()}
+                      <button
+                        className="monitor-node-card-edit"
+                        onClick={() => handleEditCableLength(node)}
+                        title="Edit Cable Length"
+                      >
+                        <Edit />
+                      </button>
+                    </div>
+
+                    <div className="monitor-water-level">
+                      <div className="monitor-water-level-header">
+                        <span className="monitor-water-level-label">Water Level</span>
+                        <span className="monitor-water-level-value">
+                          {node.avgHeight}m <span>/ {node.h1_m}m</span>
+                        </span>
+                      </div>
+                      <div className="monitor-progress-bar">
+                        <div
+                          className="monitor-progress-fill"
+                          style={{ width: `${(parseFloat(node.avgHeight) / parseFloat(node.h1_m || 20)) * 100}%` }}
+                        ></div>
                       </div>
                     </div>
 
-                    {/* Water Level Progress */}
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
-                        <span style={{ color: '#64748B' }}>Water Level</span>
-                        <span style={{ fontWeight: 600, color: '#0F172A' }}>
-                          {node.avgHeight}m <span style={{ color: '#94A3B8', fontWeight: 400 }}>/ {node.h1_m}m</span>
-                        </span>
+                    <div className="monitor-node-card-footer">
+                      <div className="monitor-node-card-footer-item">
+                        <Signal /> {node.count} readings
                       </div>
-                      <div style={{
-                        height: '8px',
-                        background: '#F1F5F9',
-                        borderRadius: '4px',
-                        overflow: 'hidden'
-                      }}>
-                        <div style={{
-                          width: `${(parseFloat(node.avgHeight) / parseFloat(node.h1_m || 20)) * 100}%`,
-                          height: '100%',
-                          background: 'linear-gradient(90deg, #3B82F6, #0EA5E9)',
-                          borderRadius: '4px'
-                        }}></div>
-                      </div>
-                    </div>
-
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '12px',
-                      paddingTop: '16px',
-                      borderTop: '1px solid #F1F5F9'
-                    }}>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <Signal size={14} style={{ color: '#64748B' }} />
-                        <span style={{ fontSize: '12px', color: '#64748B' }}>{node.count} readings</span>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'flex-end' }}>
-                        <Clock size={14} style={{ color: '#64748B' }} />
-                        <span style={{ fontSize: '12px', color: '#64748B' }}>
-                          {node.lastReading ? new Date(node.lastReading).toLocaleTimeString() : 'N/A'}
-                        </span>
+                      <div className="monitor-node-card-footer-item">
+                        <Clock />{" "}
+                        {node.lastReading
+                          ? new Date(node.lastReading).toLocaleTimeString()
+                          : "N/A"}
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
-          </div>
+          </section>
 
           {/* Recent Readings */}
-          <div className="readings-section">
-            <div className="section-header">
-              <div className="section-title">
+          <section className="monitor-readings-section">
+            <div className="monitor-section-header">
+              <h2 className="monitor-section-title">
                 {selectedNodeView === "all" ? "Recent Readings - All Nodes" : `Recent Readings - ${selectedNodeView}`}
-              </div>
-              <div className="section-badge">
+              </h2>
+              <div className="monitor-section-badge">
                 Showing {filteredData.length} of {allReadings.length} readings
               </div>
             </div>
-            <div className="readings-list">
-              {filteredData.slice(0, 20).map((item) => (
-                <div key={item.id} className="reading-card">
-                  <div className="reading-header">
-                    <div className="reading-node">
-                      <div className="reading-node-name">{item.node}</div>
-                      <span
-                        className="status-badge"
-                        style={{
-                          background: `${getStatusColor(item.nodeStatus)}20`,
-                          color: getStatusColor(item.nodeStatus)
-                        }}
-                      >
-                        {getStatusIcon(item.nodeStatus)}
-                        {item.nodeStatus}
-                      </span>
-                    </div>
-                    <div className="reading-time">
-                      <Clock size={12} />
-                      {item.date ? item.date.toLocaleString() : 'Invalid Date'}
-                    </div>
+            <div className="monitor-readings-table-container">
+              <div className="monitor-table-header">
+                <div className="monitor-table-header-cell">Node</div>
+                <div className="monitor-table-header-cell">Status</div>
+                <div className="monitor-table-header-cell">Level</div>
+                <div className="monitor-table-header-cell">Region</div>
+                <div className="monitor-table-header-cell">Time</div>
+              </div>
+              {filteredData.slice(0, 20).map((item, i) => (
+                <div
+                  key={item.id}
+                  className={`monitor-table-row ${
+                    i % 2 === 0
+                      ? "monitor-table-row-even"
+                      : "monitor-table-row-odd"
+                  }`}
+                >
+                  <div className="monitor-table-cell">{item.node}</div>
+                  <div className="monitor-table-cell">
+                    <span
+                      className={`monitor-status-badge monitor-status-badge-${item.nodeStatus.toLowerCase()}`}
+                    >
+                      <span className="monitor-status-badge-dot" />
+                      {item.nodeStatus}
+                    </span>
                   </div>
-                  <div className="reading-metrics">
-                    <div className="reading-metric">
-                      <div className="reading-metric-label">
-                        Water Height
-                        <Tooltip content="Distance from surface to water level" />
-                      </div>
-                      <div className="reading-metric-value">{item.waterHeightM}m</div>
-                    </div>
-                    <div className="reading-metric">
-                      <div className="reading-metric-label">
-                        Depth (h₂)
-                        <Tooltip content="Distance from cable end to water surface" />
-                      </div>
-                      <div className="reading-metric-value">{item.h2}m</div>
-                    </div>
+                  <div className="monitor-table-cell">
+                    <TrendingUp /> {item.waterHeightM}m
+                    <TableTooltip text="Distance from sensor to water surface" />
                   </div>
-                  {/* Debug: Show Raw Data - REMOVED after fix */}
+                  <div className="monitor-table-cell">{item.region}</div>
+                  <div className="monitor-table-cell">
+                    <Calendar /> {item.date.toLocaleString()}
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </>
       )
       }

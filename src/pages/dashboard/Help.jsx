@@ -5,6 +5,8 @@ import {
   CheckCircle, AlertTriangle, Zap, Settings, BarChart3,
   Bell, Database, ThumbsUp, ThumbsDown, Mail, Phone, Users
 } from 'lucide-react';
+import '../../styles/monitor.css';
+import '../../styles/help.css';
 
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -312,275 +314,25 @@ const HelpPage = () => {
   };
 
   return (
-    <div className="help-page">
-      <style jsx>{`
-        @keyframes slideIn {
-          from { transform: translateX(400px); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        .help-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
-          padding: 24px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-        }
-        .help-header {
-          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
-          border-radius: 24px;
-          padding: 48px 40px;
-          margin-bottom: 24px;
-          color: white;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
-        }
-        .help-header::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          right: -20%;
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%);
-          border-radius: 50%;
-        }
-        .header-content {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          gap: 32px;
-        }
-        .header-icon-large {
-          width: 80px;
-          height: 80px;
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          backdrop-filter: blur(10px);
-        }
-        .header-info { flex: 1; }
-        .header-title {
-          font-size: 36px;
-          font-weight: 700;
-          margin-bottom: 12px;
-          letter-spacing: -1px;
-        }
-        .header-subtitle {
-          font-size: 16px;
-          opacity: 0.95;
-          line-height: 1.6;
-        }
-        .search-section {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 24px;
-          margin-bottom: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-        }
-        .search-wrapper { position: relative; }
-        .search-icon {
-          position: absolute;
-          left: 18px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #999;
-        }
-        .search-input {
-          width: 100%;
-          padding: 16px 20px 16px 52px;
-          border: 2px solid #E8E8E8;
-          border-radius: 12px;
-          font-size: 15px;
-          outline: none;
-          transition: all 0.2s ease;
-        }
-        .search-input:focus {
-          border-color: #0369a1;
-          box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
-        }
-        .help-content {
-          display: grid;
-          grid-template-columns: 280px 1fr;
-          gap: 24px;
-        }
-        .sidebar { display: flex; flex-direction: column; gap: 16px; }
-        .sidebar-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-        }
-        .nav-item {
-          width: 100%;
-          padding: 14px 16px;
-          background: transparent;
-          border: none;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 14px;
-          font-weight: 600;
-          color: #666;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          margin-bottom: 6px;
-        }
-        .nav-item:hover { background: #F5F5F5; color: #00cf45bc; }
-        .nav-item.active {
-          background: linear-gradient(135deg, #0369a1, #0284c7);
-          color: white;
-          box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
-        }
-        .quick-link-item {
-          padding: 12px;
-          background: #FAFAFA;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          border: 1px solid #F0F0F0;
-          margin-bottom: 8px;
-        }
-        .quick-link-item:hover {
-          background: white;
-          border-color: #00cf45bc;
-        }
-        .quick-link-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, #0369a1, #0284c7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-        }
-        .quick-link-text {
-          font-size: 13px;
-          font-weight: 600;
-          color: #000;
-        }
-        .main-content {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 32px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        }
-        .content-header {
-          margin-bottom: 32px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid #F0F0F0;
-        }
-        .content-title {
-          font-size: 24px;
-          font-weight: 700;
-          color: #000;
-          margin-bottom: 8px;
-        }
-        .content-subtitle {
-          font-size: 15px;
-          color: #666;
-        }
-        .faq-list { display: flex; flex-direction: column; gap: 16px; }
-        .faq-item {
-          background: #FAFAFA;
-          border-radius: 12px;
-          border: 1px solid #F0F0F0;
-          overflow: hidden;
-        }
-        .faq-question-btn {
-          width: 100%;
-          padding: 20px;
-          background: transparent;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          cursor: pointer;
-        }
-        .faq-question-text {
-          font-size: 15px;
-          font-weight: 700;
-          color: #000;
-        }
-        .faq-answer {
-          padding: 0 20px 20px;
-          font-size: 14px;
-          color: #666;
-          line-height: 1.8;
-          white-space: pre-line;
-        }
-        .faq-actions {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-top: 16px;
-          padding-top: 16px;
-          border-top: 1px solid #F0F0F0;
-        }
-        .feedback-text {
-          font-size: 13px;
-          color: #999;
-          font-weight: 600;
-        }
-        .action-btn {
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          background: white;
-          border: 1px solid #E8E8E8;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          color: #666;
-        }
-        .action-btn:hover {
-          border-color: #00cf45bc;
-          color: #00cf45bc;
-        }
-        .action-btn.active-positive {
-          background: #DCFCE7;
-          border-color: #16A34A;
-          color: #16A34A;
-        }
-        @media (max-width: 1024px) {
-          .help-content { grid-template-columns: 1fr; }
-          .header-content { flex-direction: column; }
-        }
-      `}</style>
-
+    <div className="monitor-page">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
       <div className="help-header">
-        <div className="header-content">
-          <div className="header-icon-large"><HelpCircle size={40} /></div>
-          <div className="header-info">
-            <h1 className="header-title">Help & Support</h1>
-            <p className="header-subtitle">Find answers and get expert support</p>
+        <div className="help-header-content">
+          <div className="help-header-icon"><HelpCircle size={32} /></div>
+          <div className="help-header-info">
+            <h1>Help & Support</h1>
+            <p>Find answers and get expert support</p>
           </div>
         </div>
       </div>
 
-      <div className="search-section">
-        <div className="search-wrapper">
-          <Search size={20} className="search-icon" />
+      <div className="help-search-section">
+        <div className="help-search-wrapper">
+          <Search size={18} className="help-search-icon" />
           <input
             type="text"
-            className="search-input"
+            className="help-search-input"
             placeholder="Search help articles..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -589,77 +341,77 @@ const HelpPage = () => {
       </div>
 
       <div className="help-content">
-        <div className="sidebar">
-          <div className="sidebar-card">
+        <div className="help-sidebar">
+          <div className="help-sidebar-card">
             {Object.keys(faqData).map(tab => (
               <button
                 key={tab}
-                className={`nav-item ${activeTab === tab ? 'active' : ''}`}
+                className={`help-nav-item ${activeTab === tab ? 'active' : ''}`}
                 onClick={() => { setActiveTab(tab); setSearchQuery(''); }}
               >
-                {tab === 'getting-started' && <Zap size={18} />}
-                {tab === 'monitoring' && <BarChart3 size={18} />}
-                {tab === 'notifications' && <Bell size={18} />}
-                {tab === 'settings' && <Settings size={18} />}
-                {tab === 'troubleshooting' && <AlertTriangle size={18} />}
-                {tab === 'technical' && <Database size={18} />}
+                {tab === 'getting-started' && <Zap size={16} />}
+                {tab === 'monitoring' && <BarChart3 size={16} />}
+                {tab === 'notifications' && <Bell size={16} />}
+                {tab === 'settings' && <Settings size={16} />}
+                {tab === 'troubleshooting' && <AlertTriangle size={16} />}
+                {tab === 'technical' && <Database size={16} />}
                 <span>{tab.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}</span>
               </button>
             ))}
           </div>
 
-          <div className="sidebar-card">
-            <div className="quick-link-item" onClick={() => navigate('/settings')}>
-              <div className="quick-link-icon"><Settings size={16} /></div>
-              <span className="quick-link-text">Settings</span>
+          <div className="help-sidebar-card">
+            <div className="help-quick-link-item" onClick={() => navigate('/settings')}>
+              <div className="help-quick-link-icon"><Settings size={14} /></div>
+              <span className="help-quick-link-text">Settings</span>
             </div>
-            <div className="quick-link-item" onClick={() => navigate('/profile')}>
-              <div className="quick-link-icon"><Users size={16} /></div>
-              <span className="quick-link-text">Profile</span>
+            <div className="help-quick-link-item" onClick={() => navigate('/profile')}>
+              <div className="help-quick-link-icon"><Users size={14} /></div>
+              <span className="help-quick-link-text">Profile</span>
             </div>
-            <div className="quick-link-item" onClick={() => window.open('mailto:support@waleki.com')}>
-              <div className="quick-link-icon"><Mail size={16} /></div>
-              <span className="quick-link-text">Email</span>
+            <div className="help-quick-link-item" onClick={() => window.open('mailto:support@waleki.com')}>
+              <div className="help-quick-link-icon"><Mail size={14} /></div>
+              <span className="help-quick-link-text">Email</span>
             </div>
           </div>
         </div>
 
-        <div className="main-content">
-          <div className="content-header">
-            <h2 className="content-title">
+        <div className="help-main-content">
+          <div className="help-content-header">
+            <h2 className="help-content-title">
               {searchQuery.trim() ? `Search: "${searchQuery}"` : activeTab.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
             </h2>
-            <p className="content-subtitle">
+            <p className="help-content-subtitle">
               {displayedFAQs.length} article{displayedFAQs.length !== 1 ? 's' : ''} found
             </p>
           </div>
 
-          <div className="faq-list">
+          <div className="help-faq-list">
             {displayedFAQs.map(faq => (
-              <div key={faq.id} className="faq-item">
-                <button className="faq-question-btn" onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}>
-                  <div className="faq-question-text">{faq.question}</div>
-                  {expandedFAQ === faq.id ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+              <div key={faq.id} className="help-faq-item">
+                <button className="help-faq-question-btn" onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}>
+                  <div className="help-faq-question-text">{faq.question}</div>
+                  {expandedFAQ === faq.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                 </button>
                 {expandedFAQ === faq.id && (
-                  <div className="faq-answer">
+                  <div className="help-faq-answer">
                     {faq.answer}
-                    <div className="faq-actions">
-                      <span className="feedback-text">Helpful?</span>
+                    <div className="help-faq-actions">
+                      <span className="help-feedback-text">Helpful?</span>
                       <button
-                        className={`action-btn ${feedbackGiven[faq.id] === true ? 'active-positive' : ''}`}
+                        className={`help-action-btn ${feedbackGiven[faq.id] === true ? 'active-positive' : ''}`}
                         onClick={() => handleFeedback(faq.id, true)}
                       >
-                        <ThumbsUp size={14} />
+                        <ThumbsUp size={12} />
                       </button>
                       <button
-                        className={`action-btn ${feedbackGiven[faq.id] === false ? 'active-negative' : ''}`}
+                        className={`help-action-btn ${feedbackGiven[faq.id] === false ? 'active-negative' : ''}`}
                         onClick={() => handleFeedback(faq.id, false)}
                       >
-                        <ThumbsDown size={14} />
+                        <ThumbsDown size={12} />
                       </button>
-                      <button className="action-btn" onClick={() => copyToClipboard(faq.answer)} style={{ marginLeft: 'auto' }}>
-                        <Copy size={14} />
+                      <button className="help-action-btn" onClick={() => copyToClipboard(faq.answer)} style={{ marginLeft: 'auto' }}>
+                        <Copy size={12} />
                       </button>
                     </div>
                   </div>

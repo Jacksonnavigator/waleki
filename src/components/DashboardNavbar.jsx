@@ -86,7 +86,7 @@ const DashboardNavbar = () => {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+          background: linear-gradient(90deg,rgb(0, 11, 97) 0%, rgba(0, 0, 224, 1) 35%, rgb(77, 145, 255) 100%);
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           transition: all var(--transition-normal);
           font-family: var(--font-primary);
@@ -648,6 +648,11 @@ const DashboardNavbar = () => {
 
           .icon-btn {
             display: none;
+          }
+
+          /* Keep notifications visible on mobile */
+          .icon-btn[title="Notifications"] {
+            display: flex;
           }
 
           .profile-info {

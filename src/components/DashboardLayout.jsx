@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Sidebar from "./Sidebar";
@@ -11,6 +11,7 @@ import "../styles/DashboardLayout.css";
 const DashboardLayout = ({ children }) => {
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Protect dashboard routes - redirect if not authenticated
   useEffect(() => {
@@ -47,10 +48,13 @@ const DashboardLayout = ({ children }) => {
       {/* Main Content Area with Sidebar */}
       <div className="dashboard-with-sidebar">
         {/* Modern Sidebar Navigation */}
-        <Sidebar />
+        <Sidebar 
+          isCollapsed={sidebarCollapsed} 
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+        />
         
         {/* Page Content */}
-        <main className="dashboard-main with-sidebar-offset">
+        <main className={`dashboard-main with-sidebar-offset ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
           <div className="dashboard-content">
             {children}
           </div>

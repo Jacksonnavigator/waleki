@@ -92,12 +92,12 @@ const DashboardPage = () => {
       };
     } else if (hour >= 17 && hour < 21) {
       return {
-        text: `Good evening, ${name}! 🌆`,
+        text: `Good evening, ${name}!🌞`,
         subtext: "Winding down for the day"
       };
     } else {
       return {
-        text: `Good night, ${name}! 🌃`,
+        text: `Good night, ${name}! 🌙`,
         subtext: "Late evening check-in"
       };
     }
@@ -400,17 +400,71 @@ const DashboardPage = () => {
           transition: background-color var(--transition-normal);
         }
 
-        /* Header */
-        .dashboard-header {
-          background: var(--color-bg-secondary);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-radius: var(--radius-xl);
-          padding: var(--spacing-2xl);
-          margin-bottom: var(--spacing-xl);
-          border: 1px solid var(--color-border);
-          box-shadow: var(--shadow-lg);
-        }
+      /* ===============================
+   Glassmorphism Dashboard Header
+   =============================== */
+
+.dashboard-header {
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.06)
+  );
+
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+
+  box-shadow:
+    0 24px 60px rgba(2, 6, 23, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Light refraction highlight */
+.dashboard-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.35),
+    transparent 40%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.18)
+  );
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Blue accent glow */
+.dashboard-header::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.35), transparent 45%),
+    radial-gradient(circle at 80% 60%, rgba(34, 211, 238, 0.25), transparent 50%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep header content above glass layers */
+.dashboard-header > * {
+  position: relative;
+  z-index: 1;
+}
+
 
         .header-top {
           display: flex;
@@ -492,193 +546,341 @@ const DashboardPage = () => {
           background: white;
         }
 
-        /* Hero Card */
-        .hero-card {
-          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
-          border-radius: 24px;
-          padding: 48px;
-          color: white;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
-        }
+     /* ===============================
+   Ultra-Modern Glassmorphism Hero
+   =============================== */
 
-        .hero-card::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          right: -20%;
-          width: 500px;
-          height: 500px;
-          background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%);
-          border-radius: 50%;
-          animation: float 8s ease-in-out infinite;
-        }
+.hero-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.05)
+  );
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
 
-        .hero-card::after {
-          content: '';
-          position: absolute;
-          bottom: -30%;
-          left: -10%;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
-          border-radius: 50%;
-          animation: float 10s ease-in-out infinite reverse;
-        }
+  border-radius: 28px;
+  padding: 52px;
+  color: #ffffff;
 
-        @keyframes float {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(20px, -20px) scale(1.05); }
-        }
+  position: relative;
+  overflow: hidden;
 
-        .hero-content {
-          position: relative;
-          z-index: 1;
-        }
+  border: 1px solid rgba(255, 255, 255, 0.22);
 
-        .hero-label {
-          font-size: 13px;
-          font-weight: 600;
-          opacity: 0.8;
-          margin-bottom: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
+  box-shadow:
+    0 40px 80px rgba(2, 6, 23, 0.55),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
 
-        .hero-value {
-          font-size: 56px;
-          font-weight: 700;
-          margin-bottom: 8px;
-          letter-spacing: -1.5px;
-        }
+  transition: transform 0.45s ease, box-shadow 0.45s ease;
+}
 
-        .hero-unit {
-          font-size: 24px;
-          opacity: 0.9;
-          margin-left: 8px;
-        }
+/* Hover lift */
+.hero-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 60px 120px rgba(2, 6, 23, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
 
-        .hero-subtitle {
-          font-size: 14px;
-          opacity: 0.8;
-          margin-bottom: 16px;
-        }
+/* Light refraction layer */
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.35),
+    transparent 35%,
+    transparent 65%,
+    rgba(255, 255, 255, 0.15)
+  );
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
 
-        .hero-stats {
-          display: flex;
-          gap: 24px;
-          margin-top: 20px;
-        }
+/* Aurora glow background */
+.hero-card::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.35), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.25), transparent 45%),
+    radial-gradient(circle at 50% 90%, rgba(99, 102, 241, 0.2), transparent 50%);
+  filter: blur(60px);
+  animation: aurora 16s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
 
-        .hero-stat {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px 20px;
-          background: rgba(255,255,255,0.1);
-          border-radius: 16px;
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255,255,255,0.15);
-          transition: all 0.3s ease;
-        }
+/* Aurora animation */
+@keyframes aurora {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.05);
+  }
+}
 
-        .hero-stat:hover {
-          background: rgba(255,255,255,0.15);
-          transform: translateY(-2px);
-        }
+/* Content stays above effects */
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
 
-        .hero-stat-label {
-          font-size: 12px;
-          opacity: 0.8;
-        }
+/* ===============================
+   Typography
+   =============================== */
 
-        .hero-stat-value {
-          font-size: 18px;
-          font-weight: 700;
-        }
+.hero-label {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.75;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
 
-        /* Stats Grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 16px;
-          margin-bottom: 24px;
-        }
+.hero-value {
+  font-size: 60px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+}
 
-        .stat-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 28px;
-          border: 1px solid rgba(255, 255, 255, 0.9);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
+.hero-unit {
+  font-size: 22px;
+  opacity: 0.85;
+  margin-left: 6px;
+}
 
-        .stat-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #0ea5e9, #22d3ee, #06b6d4);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
+.hero-subtitle {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-top: 10px;
+}
 
-        .stat-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-        }
+/* ===============================
+   Stats Section
+   =============================== */
 
-        .stat-card:hover::before {
-          opacity: 1;
-        }
+.hero-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 28px;
+}
 
-        .stat-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 16px;
-        }
+.hero-stat {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
 
-        .stat-icon {
-          width: 48px;
-          height: 48px;
-          background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
-        }
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.06)
+  );
 
-        .stat-label {
-          font-size: 12px;
-          color: #999;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 8px;
-        }
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 
-        .stat-value {
-          font-size: 32px;
-          font-weight: 700;
-          color: #000;
-          letter-spacing: -0.5px;
-        }
+  border: 1px solid rgba(255, 255, 255, 0.18);
 
-        .stat-subtitle {
-          font-size: 12px;
-          color: #666;
-          margin-top: 4px;
-          font-weight: 500;
-        }
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 25px rgba(0, 0, 0, 0.25);
+
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.hero-stat:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 18px 40px rgba(56, 189, 248, 0.35);
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  opacity: 0.7;
+  letter-spacing: 0.5px;
+}
+
+.hero-stat-value {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+/* ===============================
+   Stats Grid
+   =============================== */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   Glass Stat Card
+   =============================== */
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.14)
+  );
+
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+
+  border-radius: 22px;
+  padding: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.32);
+
+  box-shadow:
+    0 20px 40px rgba(2, 6, 23, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 35px 70px rgba(2, 6, 23, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* ===============================
+   Blue Accent Line
+   =============================== */
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    #0ea5e9,
+    #22d3ee,
+    #0284c7
+  );
+
+  border-radius: 0 0 6px 6px;
+  opacity: 0.95;
+}
+
+/* Soft blue glow */
+.stat-card::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.28), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.22), transparent 45%);
+
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+/* ===============================
+   Card Content
+   =============================== */
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass Icon */
+.stat-icon {
+  width: 48px;
+  height: 48px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45),
+    rgba(255, 255, 255, 0.2)
+  );
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 8px 20px rgba(14, 165, 233, 0.35);
+}
+
+/* ===============================
+   Typography (Blue Ocean System)
+   =============================== */
+
+/* Hard-coded text (e.g. "Total Nodes") */
+.stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+
+  color:  #0b0152; /* blue ocean */
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.5);
+
+  margin-bottom: 8px;
+}
+
+/* Main value (e.g. "4") */
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+
+  color: rgba(255, 255, 255, 0.98);
+  text-shadow:
+    0 2px 4px rgba(2, 6, 23, 0.55),
+    0 0 14px rgba(56, 189, 248, 0.25);
+}
+
+/* Subtitle (e.g. "LoRa Sensors") */
+.stat-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #0b0152; /* lighter blue ocean */
+  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.45);
+
+  margin-top: 6px;
+}
+
 
         /* Section Header */
         .section-header {

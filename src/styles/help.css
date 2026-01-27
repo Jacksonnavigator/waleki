@@ -1,0 +1,469 @@
+/* ==========================================
+   HELP & SUPPORT PAGE - STYLES
+   Extends monitor.css with help-specific styles
+   ========================================== */
+
+/* ==========================================
+   HELP HEADER – TRUE OCEAN BLUE GLASS
+   ========================================== */
+.help-header {
+  /* Semi-transparent ocean blue */
+  background: rgba(210, 244, 255, 0.4); /* ocean blue with transparency */
+
+  /* Frosted glass effect */
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+
+  border-radius: 18px;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  color: #4002fc;
+  position: relative;
+  overflow: hidden;
+
+  /* Soft border and shadow */
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  box-shadow: 0 25px 60px rgba(2, 18, 38, 0.35);
+}
+
+.help-header::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(
+    circle,
+    rgba(125, 211, 252, 0.3) 0%,
+    rgba(56, 189, 248, 0.15) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(50px);
+}
+
+.help-header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.help-header-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.15); /* semi-transparent frosted icon */
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+
+  border: 1px solid rgba(186, 230, 253, 0.3);
+  box-shadow: 0 10px 24px rgba(14, 116, 144, 0.3);
+}
+
+.help-header-info h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.help-header-info p {
+  font-size: 16px;
+  opacity: 0.92;
+  line-height: 1.6;
+  color:#4002fc;
+}
+
+/* ==========================================
+   SEARCH SECTION
+   ========================================== */
+.help-search-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.help-search-wrapper {
+  position: relative;
+}
+
+.help-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+}
+
+.help-search-input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.help-search-input:focus {
+  border-color: #0369a1;
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
+}
+
+/* ==========================================
+   HELP CONTENT GRID
+   ========================================== */
+.help-content {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+.help-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.help-sidebar-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.help-nav-item {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 6px;
+}
+
+.help-nav-item:hover {
+  background: #f1f5f9;
+  color: #0369a1;
+}
+
+.help-nav-item.active {
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  color: white;
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
+}
+
+.help-quick-link-item {
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.help-quick-link-item:hover {
+  background: white;
+  border-color: #0369a1;
+}
+
+.help-quick-link-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.help-quick-link-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ==========================================
+   MAIN CONTENT
+   ========================================== */
+.help-main-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.help-content-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.help-content-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.help-content-subtitle {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ==========================================
+   FAQ LIST
+   ========================================== */
+.help-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.help-faq-item {
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.help-faq-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.help-faq-question-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+}
+
+.help-faq-question-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.help-faq-answer {
+  padding: 0 20px 16px;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.help-faq-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.help-feedback-text {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.help-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+}
+
+.help-action-btn:hover {
+  border-color: #0369a1;
+  color: #0369a1;
+}
+
+.help-action-btn.active-positive {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.help-action-btn.active-negative {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+@media (max-width: 1024px) {
+  .help-content {
+    grid-template-columns: 1fr;
+  }
+
+  .help-header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .help-header {
+    padding: 24px 20px;
+  }
+
+  .help-header-info h1 {
+    font-size: 24px;
+  }
+
+  .help-main-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .help-header {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+  }
+
+  .help-header-info h1 {
+    font-size: 20px;
+  }
+
+  .help-header-info p {
+    font-size: 14px;
+  }
+
+  .help-search-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .help-content {
+    gap: 16px;
+  }
+
+  .help-sidebar {
+    gap: 12px;
+  }
+
+  .help-sidebar-card {
+    padding: 12px;
+  }
+
+  .help-nav-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .help-main-content {
+    padding: 16px;
+  }
+
+  .help-content-header {
+    margin-bottom: 20px;
+  }
+
+  .help-faq-list {
+    gap: 8px;
+  }
+
+  .help-faq-item {
+    border-radius: 8px;
+  }
+
+  .help-faq-question-btn {
+    padding: 12px 16px;
+  }
+
+  .help-faq-question-text {
+    font-size: 14px;
+  }
+
+  .help-faq-answer {
+    padding: 0 16px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .help-header-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .help-header-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .help-search-input {
+    padding: 12px 14px 12px 40px;
+    font-size: 14px;
+  }
+
+  .help-search-icon {
+    left: 14px;
+  }
+
+  .help-quick-link-item {
+    padding: 10px;
+  }
+
+  .help-quick-link-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .help-quick-link-text {
+    font-size: 12px;
+  }
+
+  .help-action-btn {
+    width: 24px;
+    height: 24px;
+  }
+
+  .help-action-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+}

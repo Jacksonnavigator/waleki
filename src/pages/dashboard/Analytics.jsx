@@ -13,6 +13,7 @@ import {
 import { ref, onValue } from "firebase/database";
 import { database } from "../../config/firebase";
 import { useNavigate } from "react-router-dom";
+import "../../styles/monitor.css";
 // import HelpTooltip from "../../components/Tooltip";
 // Future advanced features - uncomment when integrating:
 // import NodeMap from "../../components/NodeMap";
@@ -518,7 +519,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="analytics-page">
+    <div className="monitor-page">
       <style jsx>{`
         @keyframes spin {
           to { transform: rotate(360deg); }
@@ -1160,8 +1161,8 @@ const Analytics = () => {
       </div>
 
       {/* Statistics */}
-      <div className="stats-grid">
-        <div className="stat-card">
+      <div className="monitor-stats-grid">
+        <div className="monitor-stat-card">
           <div className="stat-header">
             <div className="stat-icon">
               <Waves size={20} />
@@ -1178,7 +1179,7 @@ const Analytics = () => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="monitor-stat-card">
           <div className="stat-header">
             <div className="stat-icon">
               <TrendingUp size={20} />
@@ -1191,7 +1192,7 @@ const Analytics = () => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="monitor-stat-card">
           <div className="stat-header">
             <div className="stat-icon">
               <Droplets size={20} />
@@ -1204,7 +1205,7 @@ const Analytics = () => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="monitor-stat-card">
           <div className="stat-header">
             <div className="stat-icon">
               <Database size={20} />
@@ -1455,42 +1456,54 @@ const Analytics = () => {
           )}
 
           {/* Detailed Readings Table */}
-          <div className="table-container">
-            <div className="table-header">
-              <div className="table-title">Detailed Readings</div>
-              <div className="table-badge">{filteredData.length} records</div>
+          <section className="monitor-readings-section" style={{ marginTop: '32px' }}>
+            <div className="monitor-section-header">
+              <h2 className="monitor-section-title">Detailed Readings</h2>
+              <div className="monitor-section-badge">
+                Showing {filteredData.slice(0, 100).length} of {filteredData.length} readings
+              </div>
             </div>
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Node</th>
-                    <th>Timestamp</th>
-                    <th>Water Height (m)</th>
-                    <th>h₁ (m)</th>
-                    <th>h₂ / Depth (m)</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.slice(0, 100).map((reading) => (
-                    <tr key={reading.id}>
-                      <td className="node-name">{reading.node}</td>
-                      <td>{reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}</td>
-                      <td>{reading.waterHeight}</td>
-                      <td>{reading.h1}</td>
-                      <td>{reading.depth_m}</td>
-                      <td>
-                        <span className={reading.activated ? 'status-badge status-active' : 'status-badge status-inactive'}>
-                          {reading.activated ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="monitor-readings-table-container">
+              <div className="monitor-table-header">
+                <div className="monitor-table-header-cell">Node</div>
+                <div className="monitor-table-header-cell">Status</div>
+                <div className="monitor-table-header-cell">Water Height</div>
+                <div className="monitor-table-header-cell">h₁ (m)</div>
+                <div className="monitor-table-header-cell">h₂ / Depth</div>
+                <div className="monitor-table-header-cell">Time</div>
+              </div>
+              {filteredData.slice(0, 100).map((reading, i) => (
+                <div
+                  key={reading.id}
+                  className={`monitor-table-row ${
+                    i % 2 === 0
+                      ? "monitor-table-row-even"
+                      : "monitor-table-row-odd"
+                  }`}
+                >
+                  <div className="monitor-table-cell">{reading.node}</div>
+                  <div className="monitor-table-cell">
+                    <span
+                      className={`monitor-status-badge monitor-status-badge-${
+                        reading.activated ? "active" : "inactive"
+                      }`}
+                    >
+                      <span className="monitor-status-badge-dot" />
+                      {reading.activated ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <div className="monitor-table-cell">
+                    <TrendingUp /> {reading.waterHeight}m
+                  </div>
+                  <div className="monitor-table-cell">{reading.h1}m</div>
+                  <div className="monitor-table-cell">{reading.depth_m}m</div>
+                  <div className="monitor-table-cell">
+                    <Calendar /> {reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          </section>
 
           {/* Export Footer */}
           <div className="export-footer">

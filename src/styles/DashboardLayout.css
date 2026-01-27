@@ -58,6 +58,10 @@
   min-height: 100vh;
 }
 
+.dashboard-main.with-sidebar-offset.sidebar-collapsed {
+  margin-left: var(--size-sidebar-collapsed);
+}
+
 /* Navbar Container - Full Width */
 .dashboard-navbar-container {
   position: sticky;
@@ -96,7 +100,7 @@
 
 @media (max-width: 768px) {
   .dashboard-main.with-sidebar-offset {
-    margin-left: 0;
+    margin-left: var(--size-sidebar-collapsed);
   }
   
   .dashboard-content {
