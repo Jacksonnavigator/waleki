@@ -561,7 +561,7 @@ const DashboardPage = () => {
 
   border-radius: 28px;
   padding: 52px;
-  color: #ffffff;
+  color: #000d83;
 
   position: relative;
   overflow: hidden;
