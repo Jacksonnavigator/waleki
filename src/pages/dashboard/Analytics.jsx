@@ -1464,44 +1464,43 @@ const Analytics = () => {
               </div>
             </div>
             <div className="monitor-readings-table-container">
-              <div className="monitor-table-header">
-                <div className="monitor-table-header-cell">Node</div>
-                <div className="monitor-table-header-cell">Status</div>
-                <div className="monitor-table-header-cell">Water Height</div>
-                <div className="monitor-table-header-cell">h₁ (m)</div>
-                <div className="monitor-table-header-cell">h₂ / Depth</div>
-                <div className="monitor-table-header-cell">Time</div>
-              </div>
-              {filteredData.slice(0, 100).map((reading, i) => (
-                <div
-                  key={reading.id}
-                  className={`monitor-table-row ${
-                    i % 2 === 0
-                      ? "monitor-table-row-even"
-                      : "monitor-table-row-odd"
-                  }`}
-                >
-                  <div className="monitor-table-cell">{reading.node}</div>
-                  <div className="monitor-table-cell">
-                    <span
-                      className={`monitor-status-badge monitor-status-badge-${
-                        reading.activated ? "active" : "inactive"
-                      }`}
-                    >
-                      <span className="monitor-status-badge-dot" />
-                      {reading.activated ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                  <div className="monitor-table-cell">
-                    <TrendingUp /> {reading.waterHeight}m
-                  </div>
-                  <div className="monitor-table-cell">{reading.h1}m</div>
-                  <div className="monitor-table-cell">{reading.depth_m}m</div>
-                  <div className="monitor-table-cell">
-                    <Calendar /> {reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}
-                  </div>
-                </div>
-              ))}
+              <table className="monitor-table">
+                <thead>
+                  <tr>
+                    <th>Node</th>
+                    <th>Status</th>
+                    <th>Water Height</th>
+                    <th>h₁ (m)</th>
+                    <th>h₂ / Depth</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.slice(0, 100).map((reading, i) => (
+                    <tr key={reading.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
+                      <td>{reading.node}</td>
+                      <td>
+                        <span
+                          className={`monitor-status-badge monitor-status-badge-${
+                            reading.activated ? "active" : "inactive"
+                          }`}
+                        >
+                          <span className="monitor-status-badge-dot" />
+                          {reading.activated ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td>
+                        <TrendingUp /> {reading.waterHeight}m
+                      </td>
+                      <td>{reading.h1}m</td>
+                      <td>{reading.depth_m}m</td>
+                      <td>
+                        <Calendar /> {reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
 

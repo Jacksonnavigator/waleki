@@ -531,47 +531,46 @@ const Health = () => {
               <p>No system logs match your current filters</p>
             </div>
           ) : (
-            <>
-              <div className="monitor-table-header">
-                <div className="monitor-table-header-cell">Type</div>
-                <div className="monitor-table-header-cell">Message</div>
-                <div className="monitor-table-header-cell">Time</div>
-              </div>
-              {filteredLogs.slice(0, 50).map((log, i) => (
-                <div
-                  key={log.id}
-                  className={`monitor-table-row ${
-                    i % 2 === 0
-                      ? "monitor-table-row-even"
-                      : "monitor-table-row-odd"
-                  }`}
-                >
-                  <div className="monitor-table-cell">
-                    <span
-                      className={`monitor-status-badge monitor-status-badge-${
-                        log.type === "error" ? "inactive" :
-                        log.type === "warning" ? "warning" :
-                        log.type === "success" ? "active" : "info"
-                      }`}
-                    >
-                      <span className="monitor-status-badge-dot" />
-                      {log.type}
-                    </span>
-                  </div>
-                  <div className="monitor-table-cell">{log.message}</div>
-                  <div className="monitor-table-cell">
-                    <Clock size={14} />
-                    {log.date.toLocaleString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit'
-                    })}
-                  </div>
-                </div>
-              ))}
-            </>
+            <div className="monitor-readings-table-container">
+              <table className="monitor-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLogs.slice(0, 50).map((log, i) => (
+                    <tr key={log.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
+                      <td>
+                        <span
+                          className={`monitor-status-badge monitor-status-badge-${
+                            log.type === "error" ? "inactive" :
+                            log.type === "warning" ? "warning" :
+                            log.type === "success" ? "active" : "info"
+                          }`}
+                        >
+                          <span className="monitor-status-badge-dot" />
+                          {log.type}
+                        </span>
+                      </td>
+                      <td>{log.message}</td>
+                      <td>
+                        <Clock size={14} />
+                        {log.date.toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>
