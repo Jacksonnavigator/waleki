@@ -890,6 +890,30 @@ const Analytics = () => {
           overflow-y: auto;
         }
 
+        /* Keep the card corners rounded and clipped; inner .table-wrapper will scroll */
+        .monitor-readings-table-container {
+          overflow: hidden;
+          border-radius: 16px;
+          background: white;
+        }
+
+        .monitor-readings-table-container .table-wrapper {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .monitor-readings-table-container table {
+          min-width: 900px; /* allow horizontal scroll to reveal columns on small screens */
+          table-layout: auto;
+          background: transparent;
+        }
+
+        @media (max-width: 767px) {
+          .monitor-readings-table-container table {
+            min-width: 700px;
+          }
+        }
+
         table {
           width: 100%;
           border-collapse: collapse;
@@ -1464,7 +1488,8 @@ const Analytics = () => {
               </div>
             </div>
             <div className="monitor-readings-table-container">
-              <table className="monitor-table">
+              <div className="table-wrapper">
+                <table className="monitor-table">
                 <thead>
                   <tr>
                     <th>Node</th>
@@ -1500,7 +1525,8 @@ const Analytics = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           </section>
 

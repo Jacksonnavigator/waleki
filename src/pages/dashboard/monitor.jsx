@@ -1263,9 +1263,9 @@ const Monitor = () => {
 
       {/* Stats */}
       {/* Stats & Insights Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '24px', marginBottom: '32px' }}>
+      <div className="stats-insights-grid">
         {/* Stats Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+        <div className="stats-row">
           <div className="stat-card" style={{ background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)', border: 'none' }}>
             <div className="stat-icon" style={{ background: 'white' }}>
               <Signal size={20} style={{ color: '#2563EB' }} />
@@ -1567,7 +1567,8 @@ const Monitor = () => {
               </div>
             </div>
             <div className="monitor-readings-table-container">
-              <table className="monitor-table">
+              <div className="table-wrapper">
+                <table className="monitor-table">
                 <thead>
                   <tr>
                     <th>Node</th>
@@ -1600,7 +1601,8 @@ const Monitor = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           </section>
         </>

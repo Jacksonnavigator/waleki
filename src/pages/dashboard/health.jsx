@@ -532,7 +532,8 @@ const Health = () => {
             </div>
           ) : (
             <div className="monitor-readings-table-container">
-              <table className="monitor-table">
+              <div className="table-wrapper">
+                <table className="monitor-table">
                 <thead>
                   <tr>
                     <th>Type</th>
@@ -569,7 +570,8 @@ const Health = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           )}
         </div>

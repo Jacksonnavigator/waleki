@@ -48,6 +48,30 @@
   padding: 32px 24px;
 }
 
+/* Stats + Insights layout used on monitor page */
+.stats-insights-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .stats-insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ==========================================
    STATS GRID
    ========================================== */
@@ -690,7 +714,15 @@
   background: white;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
-  overflow: hidden;
+  overflow: hidden; /* keep rounded corners visible; inner .table-wrapper will scroll */
+}
+
+/* Inner table wrapper: enables horizontal scrolling and vertical limits */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .monitor-table {
@@ -768,18 +800,58 @@
 }
 
 @media (max-width: 767px) {
-  .monitor-readings-table-container {
+  .monitor-readings-table-container .table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .monitor-table {
+    min-width: 800px; /* Ensure table doesn't get too compressed */
+    table-layout: auto; /* Allow columns to adjust based on content */
+    display: table; /* ensure proper table behaviour inside scroll container */
+  }
+
+  /* Ensure table inside the readings container can expand and be scrolled */
+  .monitor-readings-table-container table {
+    min-width: 900px;
+    table-layout: auto;
+    background: transparent;
   }
 
   .monitor-table th,
   .monitor-table td {
     padding: 8px 4px;
     font-size: 12px;
+    white-space: nowrap; /* Prevent text wrapping */
+    min-width: 80px; /* Minimum width for readability */
   }
 
   .monitor-table th {
     font-size: 10px;
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    z-index: 10;
+  }
+
+  /* Make first column sticky for better navigation */
+  .monitor-table th:first-child,
+  .monitor-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 5;
+  }
+
+  /* Keep parent card wrappers clipping (so border-radius is visible);
+     the inner .table-wrapper will provide horizontal scrolling. */
+  .table-container,
+  .chart-card,
+  .stat-card,
+  .monitor-readings-section,
+  .monitor-readings-table-container {
+    overflow: hidden;
+    border-radius: 16px;
   }
 }
 

@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import '../styles/Sidebar.css';
 
-const Sidebar = ({ isCollapsed, onToggle }) => {
+const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
   const location = useLocation();
 
   const navItems = [
@@ -383,14 +383,29 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
           }
 
           .sidebar:not(.collapsed) {
-            position: absolute;
+            position: fixed; /* keep fixed so it is visible regardless of scroll */
+            left: 0;
+            top: var(--size-navbar-height);
+            height: calc(100vh - var(--size-navbar-height));
             width: var(--size-sidebar);
             z-index: 1000;
+          }
+
+          .sidebar.mobile-closed {
+            display: none;
+          }
+
+          .sidebar.mobile-open {
+            display: flex;
+          }
+
+          .toggle-btn {
+            display: none;
           }
         }
       `}</style>
 
-      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : 'mobile-closed'}`}>
         <div className="sidebar-header">
           <button 
             className="toggle-btn"

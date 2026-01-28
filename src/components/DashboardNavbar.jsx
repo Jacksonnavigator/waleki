@@ -13,7 +13,7 @@ import {
 import WalekiLogo from "../assets/waleki.png";
 import NotificationManager from '../components/NotificationManager';
 
-const DashboardNavbar = () => {
+const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -505,6 +505,27 @@ const DashboardNavbar = () => {
           color: #00cf45bc;
         }
 
+        /* Mobile Sidebar Button */
+        .mobile-sidebar-btn {
+          display: none;
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: white;
+          transition: all 0.2s ease;
+          margin-right: 8px;
+        }
+
+        .mobile-sidebar-btn:hover {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+        }
+
         /* Mobile Menu */
         .mobile-menu {
           display: none;
@@ -671,6 +692,10 @@ const DashboardNavbar = () => {
             display: flex;
           }
 
+          .mobile-sidebar-btn {
+            display: flex;
+          }
+
           .mobile-menu {
             display: block;
           }
@@ -791,12 +816,12 @@ const DashboardNavbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Sidebar Toggle Button */}
             <button
-              className="mobile-menu-btn"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="mobile-sidebar-btn"
+              onClick={onMobileSidebarToggle}
             >
-              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>

@@ -70,17 +70,64 @@
 @media (max-width: 767px) {
   .monitor-readings-table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .monitor-table {
+    min-width: 600px; /* Ensure table doesn't get too compressed */
+    table-layout: auto; /* Allow columns to adjust based on content */
+    display: table; /* ensure proper table behaviour inside scroll container */
   }
 
   .monitor-table th,
   .monitor-table td {
     padding: 8px 4px;
     font-size: 12px;
+    white-space: nowrap; /* Prevent text wrapping */
+    min-width: 80px; /* Minimum width for readability */
   }
 
   .monitor-table th {
     font-size: 10px;
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    z-index: 10;
   }
+
+  /* Make first column sticky for better navigation */
+  .monitor-table th:first-child,
+  .monitor-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 5;
+  }
+
+  /* Keep parent card wrappers clipping (so border-radius is visible);
+     inner .table-wrapper will handle horizontal scrolling. */
+  .table-container,
+  .chart-card,
+  .stat-card,
+  .monitor-readings-section,
+  .monitor-readings-table-container {
+    overflow: hidden;
+    border-radius: 16px;
+  }
+}
+
+/* Inner wrapper to enable horizontal scrolling like Analytics */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.monitor-readings-table-container table {
+  min-width: 700px;
+  table-layout: auto;
+  background: transparent;
 }
 
 /* Health-specific overrides and additions */

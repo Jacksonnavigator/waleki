@@ -103,6 +103,14 @@
     margin-left: var(--size-sidebar-collapsed);
   }
   
+  .dashboard-main.mobile-sidebar-closed {
+    margin-left: 0;
+  }
+  
+  .dashboard-main.mobile-sidebar-open {
+    margin-left: var(--size-sidebar-collapsed);
+  }
+  
   .dashboard-content {
     padding: var(--spacing-lg);
   }

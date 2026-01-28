@@ -12,6 +12,7 @@ const DashboardLayout = ({ children }) => {
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Protect dashboard routes - redirect if not authenticated
   useEffect(() => {
@@ -42,7 +43,10 @@ const DashboardLayout = ({ children }) => {
     <div className="dashboard-layout">
       {/* Top Navbar - Full Width */}
       <div className="dashboard-navbar-container">
-        <DashboardNavbar />
+        <DashboardNavbar 
+          mobileSidebarOpen={mobileSidebarOpen}
+          onMobileSidebarToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        />
       </div>
       
       {/* Main Content Area with Sidebar */}
@@ -50,11 +54,13 @@ const DashboardLayout = ({ children }) => {
         {/* Modern Sidebar Navigation */}
         <Sidebar 
           isCollapsed={sidebarCollapsed} 
-          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          mobileOpen={mobileSidebarOpen}
+          onMobileToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
         />
         
         {/* Page Content */}
-        <main className={`dashboard-main with-sidebar-offset ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <main className={`dashboard-main with-sidebar-offset ${sidebarCollapsed ? 'sidebar-collapsed' : ''} ${mobileSidebarOpen ? 'mobile-sidebar-open' : 'mobile-sidebar-closed'}`}>
           <div className="dashboard-content">
             {children}
           </div>
