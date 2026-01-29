@@ -196,14 +196,15 @@ const DashboardPage = () => {
             let waterHeight = 0;
             let status = "Not Activated";
 
-            if (isActivated && h1_m > 0) {
+            if (h1_m > 0) {
               // Correct calculation: Water Height = Sensor Depth - Cable Length
-              // If sensor reads less depth than cable length = water present
-              if (h2_m < h1_m) {
-                waterHeight = h1_m - h2_m; // Water height above cable end
+              waterHeight = h1_m - h2_m;
 
-                // Determine status based on water height
-                if (waterHeight > 10) {
+              // Determine status only if activated
+              if (isActivated) {
+                if (h2_m >= h1_m) {
+                  status = "Critical";
+                } else if (waterHeight > 10) {
                   status = "Active";
                 } else if (waterHeight >= 5) {
                   status = "Warning";
@@ -212,10 +213,6 @@ const DashboardPage = () => {
                 } else {
                   status = "Critical";
                 }
-              } else {
-                // Sensor reads deeper than cable = No water or sensor error
-                waterHeight = 0;
-                status = "Critical";
               }
             }
 

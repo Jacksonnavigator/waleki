@@ -120,10 +120,8 @@ const Monitor = () => {
                 // If h2 >= h1: no water or error
                 let waterHeight = 0;
 
-                if (h2_m < nodeInfo.h1_m) {
-                  waterHeight = Math.max(0, nodeInfo.h1_m - h2_m);
-                } else {
-                  waterHeight = 0; // Sensor reading deeper than cable = no water
+                if (nodeInfo.h1_m > 0) {
+                  waterHeight = nodeInfo.h1_m - h2_m;
                 }
 
                 // Determine status based on water height
@@ -1569,38 +1567,38 @@ const Monitor = () => {
             <div className="monitor-readings-table-container">
               <div className="table-wrapper">
                 <table className="monitor-table">
-                <thead>
-                  <tr>
-                    <th>Node</th>
-                    <th>Status</th>
-                    <th>Region</th>
-                    <th>Time</th>
-                    <th>Level</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.slice(0, 20).map((item, i) => (
-                    <tr key={item.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
-                      <td>{item.node}</td>
-                      <td>
-                        <span
-                          className={`monitor-status-badge monitor-status-badge-${item.nodeStatus.toLowerCase()}`}
-                        >
-                          <span className="monitor-status-badge-dot" />
-                          {item.nodeStatus}
-                        </span>
-                      </td>
-                      <td>{item.region}</td>
-                      <td>
-                        <Calendar /> {new Date(item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </td>
-                      <td>
-                        <TrendingUp /> {item.waterHeightM}m
-                        <TableTooltip text="Distance from sensor to water surface" />
-                      </td>
+                  <thead>
+                    <tr>
+                      <th>Node</th>
+                      <th>Status</th>
+                      <th>Region</th>
+                      <th>Time</th>
+                      <th>Level</th>
                     </tr>
-                  ))}
-                </tbody>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice(0, 20).map((item, i) => (
+                      <tr key={item.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
+                        <td>{item.node}</td>
+                        <td>
+                          <span
+                            className={`monitor-status-badge monitor-status-badge-${item.nodeStatus.toLowerCase()}`}
+                          >
+                            <span className="monitor-status-badge-dot" />
+                            {item.nodeStatus}
+                          </span>
+                        </td>
+                        <td>{item.region}</td>
+                        <td>
+                          <Calendar /> {new Date(item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td>
+                          <TrendingUp /> {item.waterHeightM}m
+                          <TableTooltip text="Distance from sensor to water surface" />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </div>

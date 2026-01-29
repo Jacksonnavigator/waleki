@@ -111,10 +111,10 @@ const Analytics = () => {
                 // If h2 < h1: water present, Height = h1 - h2
                 // If h2 >= h1: no water
                 let waterHeight = 0;
-                if (nodeInfo.activated && nodeInfo.h1_m > 0) {
-                  if (h2_m < nodeInfo.h1_m) {
-                    waterHeight = Math.max(0, nodeInfo.h1_m - h2_m);
-                  }
+                if (nodeInfo.h1_m > 0) {
+                  // Calculate water height regardless of sign to help debug config errors
+                  // If h2 > h1, result will be negative, indicating h2 (depth) is larger than h1 (cable length)
+                  waterHeight = nodeInfo.h1_m - h2_m;
                 }
 
                 let parsedDate = new Date(timestamp);
@@ -1490,41 +1490,40 @@ const Analytics = () => {
             <div className="monitor-readings-table-container">
               <div className="table-wrapper">
                 <table className="monitor-table">
-                <thead>
-                  <tr>
-                    <th>Node</th>
-                    <th>Status</th>
-                    <th>Water Height</th>
-                    <th>h₁ (m)</th>
-                    <th>h₂ / Depth</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.slice(0, 100).map((reading, i) => (
-                    <tr key={reading.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
-                      <td>{reading.node}</td>
-                      <td>
-                        <span
-                          className={`monitor-status-badge monitor-status-badge-${
-                            reading.activated ? "active" : "inactive"
-                          }`}
-                        >
-                          <span className="monitor-status-badge-dot" />
-                          {reading.activated ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td>
-                        <TrendingUp /> {reading.waterHeight}m
-                      </td>
-                      <td>{reading.h1}m</td>
-                      <td>{reading.depth_m}m</td>
-                      <td>
-                        <Calendar /> {reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}
-                      </td>
+                  <thead>
+                    <tr>
+                      <th>Node</th>
+                      <th>Status</th>
+                      <th>Water Height</th>
+                      <th>h₁ (m)</th>
+                      <th>h₂ / Depth</th>
+                      <th>Time</th>
                     </tr>
-                  ))}
-                </tbody>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice(0, 100).map((reading, i) => (
+                      <tr key={reading.id} className={i % 2 === 0 ? "monitor-table-row-even" : "monitor-table-row-odd"}>
+                        <td>{reading.node}</td>
+                        <td>
+                          <span
+                            className={`monitor-status-badge monitor-status-badge-${reading.activated ? "active" : "inactive"
+                              }`}
+                          >
+                            <span className="monitor-status-badge-dot" />
+                            {reading.activated ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td>
+                          <TrendingUp /> {reading.waterHeight}m
+                        </td>
+                        <td>{reading.h1}m</td>
+                        <td>{reading.depth_m}m</td>
+                        <td>
+                          <Calendar /> {reading.date instanceof Date && !isNaN(reading.date.getTime()) ? reading.date.toLocaleString() : 'Invalid Date'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
               </div>
             </div>
