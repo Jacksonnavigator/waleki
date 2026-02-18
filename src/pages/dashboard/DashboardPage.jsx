@@ -256,10 +256,17 @@ const DashboardPage = () => {
   // Calculate statistics
   const calculateStats = (nodesArray) => {
     const total = nodesArray.length;
-    const active = nodesArray.filter(n => n.status === "Active").length;
+    const now = new Date();
+    const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+    // A node is "Active" if it has sent data within the last 2 hours
+    const active = nodesArray.filter(n =>
+      n.activated && n.lastUpdateDate instanceof Date && !isNaN(n.lastUpdateDate) && n.lastUpdateDate >= twoHoursAgo
+    ).length;
+
     const notActivated = nodesArray.filter(n => !n.activated).length;
     const alerts = nodesArray.filter(n =>
-      n.status === "Warning" || n.status === "Critical" || n.status === "Low"
+      n.status === "Warning"
     ).length;
 
     const activatedNodes = nodesArray.filter(n => n.activated);
@@ -329,9 +336,7 @@ const DashboardPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Active": return "#16A34A";
-      case "Low":
       case "Warning": return "#D97706";
-      case "Critical": return "#DC2626";
       case "Not Activated": return "#999";
       default: return "#999";
     }
@@ -340,9 +345,7 @@ const DashboardPage = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case "Active": return <CheckCircle size={14} />;
-      case "Low":
       case "Warning": return <AlertTriangle size={14} />;
-      case "Critical": return <XCircle size={14} />;
       default: return <Activity size={14} />;
     }
   };
@@ -1629,7 +1632,7 @@ const DashboardPage = () => {
               <span className="hero-unit">meters</span>
             </div>
             <div className="hero-subtitle">
-              Average: {stats.avgWaterHeight}m across {stats.activeNodes} active nodes
+              Average: {stats.avgWaterHeight}m across {stats.activeNodes} nodes sending data
             </div>
             <div className="hero-stats">
               <div className="hero-stat">
@@ -1672,7 +1675,7 @@ const DashboardPage = () => {
           </div>
           <p className="stat-label">Active Nodes</p>
           <p className="stat-value">{stats.activeNodes}</p>
-          <p className="stat-subtitle">Operational</p>
+          <p className="stat-subtitle">Sending data</p>
         </div>
 
         <div className="stat-card">
@@ -1758,14 +1761,7 @@ const DashboardPage = () => {
                     </div>
                   </div>
 
-                  {/* Validation Warning if needed */}
-                  {node.waterHeight <= 0 && (
-                    <ValidationAlert
-                      type="warning"
-                      message="Invalid reading detected"
-                      action="View details in Monitor for troubleshooting"
-                    />
-                  )}
+
 
                   {/* Quick Info */}
                   <div className="quick-info">
