@@ -11,6 +11,7 @@ import Analytics from './pages/dashboard/Analytics';
 import Settings from './pages/dashboard/Settings';
 import Profile from './pages/dashboard/Profile';
 import HelpPage from './pages/dashboard/Help';
+import HubData from './pages/dashboard/HubData';
 import RemoteDesktop from './pages/remote-desktop/RemoteDesktop';
 import PiRemoteDesktop from './pages/pi-remote-desktop/PiRemoteDesktop';
 import About from './pages/about';
@@ -56,18 +57,18 @@ function AppContent() {
   return (
     <>
       {shouldShowSplash && (
-        <SplashScreen 
-          onComplete={handleSplashComplete} 
-          minDisplayTime={1200} 
+        <SplashScreen
+          onComplete={handleSplashComplete}
+          minDisplayTime={1200}
           pageName={getPageName(location.pathname)}
         />
       )}
-      
+
       <div style={{ opacity: shouldShowSplash ? 0 : 1, transition: 'opacity 0.3s ease' }}>
         <Routes>
           {/* Redirect root path to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          
+
           {/* Public Pages - Use Layout (Landing page layout) */}
           <Route path="/home" element={<LandingPage />} />
           <Route path="/about" element={
@@ -85,11 +86,11 @@ function AppContent() {
               <Contacts />
             </Layout>
           } />
-          
+
           {/* Auth Pages - No Layout (standalone design) */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          
+
           {/* Protected Dashboard Pages - Use DashboardLayout */}
           <Route path="/dashboard" element={
             <DashboardLayout>
@@ -132,6 +133,12 @@ function AppContent() {
               <HelpPage />
             </DashboardLayout>
           } />
+
+          <Route path="/hub-data" element={
+            <DashboardLayout>
+              <HubData />
+            </DashboardLayout>
+          } />
           {/* Remote Desktop Page (admin only) */}
           <Route path="/remote-desktop" element={
             <DashboardLayout>
@@ -144,7 +151,7 @@ function AppContent() {
               <PiRemoteDesktop />
             </DashboardLayout>
           } />
-          
+
           {/* 404 Page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -170,7 +177,8 @@ function getPageName(pathname) {
     '/settings': 'Settings',
     '/profile': 'Profile',
     '/need-help': 'Help',
-    '/help': 'Help'
+    '/help': 'Help',
+    '/hub-data': 'Hub Data'
   };
   return names[pathname] || 'Page Not Found';
 }
@@ -181,7 +189,7 @@ function App() {
       <Router>
         <AppContent />
       </Router>
-    </AuthProvider> 
+    </AuthProvider>
   );
 }
 

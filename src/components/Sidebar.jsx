@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  ChevronRight, Menu, LayoutDashboard, Activity, BarChart3, 
+import {
+  ChevronRight, Menu, LayoutDashboard, Activity, BarChart3,
   Gauge, AlertCircle, Users, Settings, Zap, HelpCircle,
-  TrendingUp, MapPin
+  TrendingUp, MapPin, Database
 } from 'lucide-react';
 import '../styles/Sidebar.css';
 
@@ -24,6 +24,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
       section: 'INSIGHTS',
       items: [
         { path: '/analytics', label: 'Analytics', icon: <BarChart3 size={20} /> },
+        { path: '/hub-data', label: 'Hub Data', icon: <Database size={20} /> },
         { path: '/health', label: 'System Health', icon: <Gauge size={20} /> },
         { path: '/pi-remote-desktop', label: 'Pi Remote Desktop', icon: <Zap size={20} /> },
         { path: '#', label: 'Alerts & Events', icon: <AlertCircle size={20} /> },
@@ -407,7 +408,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
 
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : 'mobile-closed'}`}>
         <div className="sidebar-header">
-          <button 
+          <button
             className="toggle-btn"
             onClick={onToggle}
             title={isCollapsed ? 'Expand' : 'Collapse'}
