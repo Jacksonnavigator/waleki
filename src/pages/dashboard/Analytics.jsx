@@ -519,7 +519,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="monitor-page">
+    <div className="analytics-page">
       <style jsx>{`
         @keyframes spin {
           to { transform: rotate(360deg); }

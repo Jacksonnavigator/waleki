@@ -4,8 +4,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   ChevronRight, Menu, LayoutDashboard, Activity, BarChart3,
-  Gauge, AlertCircle, Users, Settings, Zap, HelpCircle,
-  TrendingUp, MapPin, Database
+  AlertCircle, Settings, HelpCircle, Database
 } from 'lucide-react';
 import '../styles/Sidebar.css';
 
@@ -16,33 +15,23 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
     {
       section: 'MAIN',
       items: [
-        { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-        { path: '/monitor', label: 'Live Monitoring', icon: <Activity size={20} /> },
+        { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={22} /> },
+        { path: '/monitor', label: 'Live Monitoring', icon: <Activity size={22} /> },
       ]
     },
     {
       section: 'INSIGHTS',
       items: [
-        { path: '/analytics', label: 'Analytics', icon: <BarChart3 size={20} /> },
-        { path: '/hub-data', label: 'Hub Data', icon: <Database size={20} /> },
-        { path: '/health', label: 'System Health', icon: <Gauge size={20} /> },
-        { path: '/pi-remote-desktop', label: 'Pi Remote Desktop', icon: <Zap size={20} /> },
-        { path: '#', label: 'Alerts & Events', icon: <AlertCircle size={20} /> },
-      ]
-    },
-    {
-      section: 'MANAGEMENT',
-      items: [
-        { path: '#', label: 'Map View', icon: <MapPin size={20} /> },
-        { path: '#', label: 'Sustainability', icon: <TrendingUp size={20} /> },
-        { path: '#', label: 'Users & Roles', icon: <Users size={20} /> },
+        { path: '/analytics', label: 'Analytics', icon: <BarChart3 size={22} /> },
+        { path: '/hub-data', label: 'Hub Data', icon: <Database size={22} /> },
+        { path: '#', label: 'Alerts & Events', icon: <AlertCircle size={22} /> },
       ]
     },
     {
       section: 'SETTINGS',
       items: [
-        { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-        { path: '/need-help', label: 'Help Center', icon: <HelpCircle size={20} /> },
+        { path: '/settings', label: 'Settings', icon: <Settings size={22} /> },
+        { path: '/need-help', label: 'Help Center', icon: <HelpCircle size={22} /> },
       ]
     }
   ];
@@ -66,13 +55,13 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           top: var(--size-navbar-height);
           height: calc(100vh - var(--size-navbar-height));
           width: var(--size-sidebar);
-          background: linear-gradient(180deg,rgb(0, 11, 97) 0%, rgba(0, 0, 224, 1) 35%,  rgb(77, 145, 255)  100%);
-          border-right: 1px solid rgba(255, 255, 255, 0.1);
+          background: #ffffff;
+          border-right: 1px solid #e5e7eb;
           display: flex;
           flex-direction: column;
           z-index: 1000;
           transition: width var(--transition-normal);
-          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+          box-shadow: 4px 0 18px rgba(15, 23, 42, 0.08);
           overflow: hidden;
         }
 
@@ -81,12 +70,11 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         }
 
         .sidebar-header {
-          padding: var(--spacing-md);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding: 10px 8px 6px;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
-          min-height: 60px;
+          justify-content: center;
+          min-height: 44px;
         }
 
         .sidebar-logo {
@@ -94,7 +82,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           align-items: center;
           gap: var(--spacing-md);
           text-decoration: none;
-          color: white;
+          color: #000000;
           flex: 1;
           min-width: 0;
           transition: opacity var(--transition-fast);
@@ -107,20 +95,20 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         .logo-icon {
           width: 40px;
           height: 40px;
-          background: rgba(0, 188, 212, 0.2);
+          background: #f8fafc;
           border-radius: var(--radius-lg);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          border: 1px solid rgba(0, 188, 212, 0.3);
+          border: 1px solid #e5e7eb;
         }
 
         .logo-icon img {
           width: 24px;
           height: 24px;
           object-fit: contain;
-          filter: brightness(0) invert(1);
+          filter: none;
         }
 
         .logo-text {
@@ -136,13 +124,13 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         .logo-text h2 {
           font-size: 18px;
           margin: 0;
-          color: white;
+          color: #000000;
           white-space: nowrap;
         }
 
         .logo-text p {
           font-size: 11px;
-          color: rgba(255, 255, 255, 0.6);
+          color: #000000;
           margin: 2px 0 0 0;
           white-space: nowrap;
           text-transform: uppercase;
@@ -150,12 +138,12 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         }
 
         .toggle-btn {
-          width: 32px;
-          height: 32px;
-          background: rgba(255, 255, 255, 0.1);
-          border: none;
+          width: 36px;
+          height: 36px;
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
           border-radius: var(--radius-md);
-          color: white;
+          color: #000000;
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -165,13 +153,13 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         }
 
         .toggle-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: #f3f4f6;
         }
 
         .sidebar-content {
           flex: 1;
           overflow-y: auto;
-          padding: var(--spacing-lg) 0;
+          padding: 6px 0 var(--spacing-lg);
           display: flex;
           flex-direction: column;
           gap: var(--spacing-lg);
@@ -182,9 +170,9 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         }
 
         .nav-section-title {
-          font-size: 10px;
-          font-weight: 700;
-          color: rgba(255, 255, 255, 0.4);
+          font-size: 12px;
+          font-weight: 800;
+          color: #000000;
           text-transform: uppercase;
           letter-spacing: 1px;
           padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
@@ -212,7 +200,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           align-items: center;
           gap: var(--spacing-md);
           padding: var(--spacing-md);
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
           text-decoration: none;
           border-radius: var(--radius-md);
           transition: all var(--transition-fast);
@@ -224,13 +212,13 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
         }
 
         .nav-item:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
+          background: #f3f4f6;
+          color: #000000;
         }
 
         .nav-item.active {
-          background: var(--color-accent);
-          color: var(--color-primary);
+          background: #e5e7eb;
+          color: #000000;
           font-weight: 600;
         }
 
@@ -241,13 +229,13 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           top: 0;
           bottom: 0;
           width: 4px;
-          background: white;
+          background: #000000;
           border-radius: 0 2px 2px 0;
         }
 
         .nav-icon {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -256,8 +244,8 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
 
         .nav-label {
           flex: 1;
-          font-size: 13px;
-          font-weight: 500;
+          font-size: 16px;
+          font-weight: 600;
           overflow: hidden;
           text-overflow: ellipsis;
           transition: opacity var(--transition-fast);
@@ -295,7 +283,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
 
         .sidebar-footer {
           padding: var(--spacing-lg) var(--spacing-md);
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid #e5e7eb;
           display: flex;
           flex-direction: column;
           gap: var(--spacing-md);
@@ -306,7 +294,7 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           align-items: center;
           gap: var(--spacing-md);
           padding: var(--spacing-md);
-          background: rgba(16, 185, 129, 0.1);
+          background: #f8fafc;
           border-radius: var(--radius-md);
           border-left: 3px solid var(--color-success);
         }
@@ -321,8 +309,8 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
 
         .status-text {
           flex: 1;
-          font-size: 12px;
-          color: rgba(255, 255, 255, 0.8);
+          font-size: 14px;
+          color: #000000;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -439,12 +427,6 @@ const Sidebar = ({ isCollapsed, onToggle, mobileOpen, onMobileToggle }) => {
           ))}
         </div>
 
-        <div className="sidebar-footer">
-          <div className="status-indicator">
-            <div className="status-dot"></div>
-            <div className="status-text">System Healthy</div>
-          </div>
-        </div>
       </aside>
     </>
   );

@@ -6,7 +6,7 @@ import {
   Droplets, Activity, AlertTriangle, MapPin,
   ChevronRight, Eye, CheckCircle,
   XCircle, RefreshCw,
-  BarChart3, Gauge, Settings, Sparkles
+  BarChart3, Settings, Sparkles
 } from "lucide-react";
 import { ref, onValue, set } from "firebase/database";
 import { database } from "../../config/firebase";
@@ -393,8 +393,8 @@ const DashboardPage = () => {
 
         .dashboard-page {
           min-height: 100vh;
-          background: var(--color-bg);
-          padding: var(--spacing-2xl);
+          background: #f8fafc;
+          padding: 28px 32px;
           font-family: var(--font-primary);
           color: var(--color-text);
           transition: background-color var(--transition-normal);
@@ -407,25 +407,12 @@ const DashboardPage = () => {
 .dashboard-header {
   position: relative;
   overflow: hidden;
-
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.06)
-  );
-
-  backdrop-filter: blur(26px) saturate(180%);
-  -webkit-backdrop-filter: blur(26px) saturate(180%);
-
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  margin-bottom: var(--spacing-xl);
-
-  border: 1px solid rgba(255, 255, 255, 0.22);
-
-  box-shadow:
-    0 24px 60px rgba(2, 6, 23, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 22px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
 }
 
 /* Light refraction highlight */
@@ -434,14 +421,8 @@ const DashboardPage = () => {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.35),
-    transparent 40%,
-    transparent 70%,
-    rgba(255, 255, 255, 0.18)
-  );
-  opacity: 0.35;
+  background: linear-gradient(120deg, rgba(14, 165, 233, 0.08), transparent 40%, rgba(16, 185, 129, 0.08));
+  opacity: 1;
   pointer-events: none;
   z-index: 0;
 }
@@ -450,11 +431,7 @@ const DashboardPage = () => {
 .dashboard-header::after {
   content: "";
   position: absolute;
-  inset: -30%;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.35), transparent 45%),
-    radial-gradient(circle at 80% 60%, rgba(34, 211, 238, 0.25), transparent 50%);
-  filter: blur(50px);
+  display: none;
   pointer-events: none;
   z-index: 0;
 }
@@ -470,7 +447,7 @@ const DashboardPage = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          margin-bottom: 24px;
+          margin-bottom: 18px;
         }
 
         .header-left {
@@ -483,7 +460,7 @@ const DashboardPage = () => {
           width: 52px;
           height: 52px;
           background: linear-gradient(135deg, #0369a1, #0284c7);
-          border-radius: 14px;
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -491,17 +468,17 @@ const DashboardPage = () => {
         }
 
         .header-text h1 {
-          font-size: 24px;
-          font-weight: 700;
-          color: #00cf45bc;
+          font-size: 27px;
+          font-weight: 900;
+          color: #0f172a;
           margin-bottom: 4px;
           letter-spacing: -0.5px;
         }
 
         .header-text p {
           font-size: 13px;
-          color: #666;
-          font-weight: 500;
+          color: #64748b;
+          font-weight: 700;
         }
 
         .header-actions {
@@ -551,36 +528,26 @@ const DashboardPage = () => {
    =============================== */
 
 .hero-card {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.05)
-  );
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-
-  border-radius: 28px;
-  padding: 52px;
-  color: #000d83;
+  background:
+    linear-gradient(135deg, rgba(2, 132, 199, 0.95), rgba(14, 165, 233, 0.82) 48%, rgba(16, 185, 129, 0.78)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0 1px, transparent 1px 18px);
+  border-radius: 18px;
+  padding: 34px;
+  color: #ffffff;
 
   position: relative;
   overflow: hidden;
 
-  border: 1px solid rgba(255, 255, 255, 0.22);
-
-  box-shadow:
-    0 40px 80px rgba(2, 6, 23, 0.55),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 44px rgba(2, 132, 199, 0.22);
 
   transition: transform 0.45s ease, box-shadow 0.45s ease;
 }
 
 /* Hover lift */
 .hero-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow:
-    0 60px 120px rgba(2, 6, 23, 0.7),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 26px 52px rgba(2, 132, 199, 0.26);
 }
 
 /* Light refraction layer */
@@ -589,14 +556,8 @@ const DashboardPage = () => {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.35),
-    transparent 35%,
-    transparent 65%,
-    rgba(255, 255, 255, 0.15)
-  );
-  opacity: 0.35;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.22), transparent 44%, rgba(255, 255, 255, 0.12));
+  opacity: 1;
   pointer-events: none;
   z-index: 0;
 }
@@ -605,13 +566,12 @@ const DashboardPage = () => {
 .hero-card::after {
   content: "";
   position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.35), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(34, 211, 238, 0.25), transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(99, 102, 241, 0.2), transparent 50%);
-  filter: blur(60px);
-  animation: aurora 16s ease-in-out infinite;
+  inset: auto 28px 28px auto;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  filter: blur(0);
+  height: 140px;
+  width: 140px;
   pointer-events: none;
   z-index: 0;
 }
@@ -639,15 +599,15 @@ const DashboardPage = () => {
 .hero-label {
   font-size: 12px;
   font-weight: 700;
-  opacity: 0.75;
+  opacity: 0.86;
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 14px;
 }
 
 .hero-value {
-  font-size: 60px;
-  font-weight: 800;
+  font-size: 64px;
+  font-weight: 900;
   letter-spacing: -2px;
   line-height: 1;
 }
@@ -660,7 +620,7 @@ const DashboardPage = () => {
 
 .hero-subtitle {
   font-size: 14px;
-  opacity: 0.75;
+  opacity: 0.9;
   margin-top: 10px;
 }
 
@@ -678,32 +638,18 @@ const DashboardPage = () => {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 22px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.06)
-  );
-
-  border-radius: 18px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border: 1px solid rgba(255, 255, 255, 0.18);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 10px 25px rgba(0, 0, 0, 0.25);
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: none;
 
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .hero-stat:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 18px 40px rgba(56, 189, 248, 0.35);
+  transform: translateY(-2px);
+  box-shadow: none;
 }
 
 .hero-stat-label {
@@ -736,32 +682,18 @@ const DashboardPage = () => {
   position: relative;
   overflow: hidden;
 
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.3),
-    rgba(255, 255, 255, 0.14)
-  );
-
-  backdrop-filter: blur(22px) saturate(180%);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-
-  border-radius: 22px;
-  padding: 28px;
-
-  border: 1px solid rgba(255, 255, 255, 0.32);
-
-  box-shadow:
-    0 20px 40px rgba(2, 6, 23, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 22px;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 35px 70px rgba(2, 6, 23, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
 }
 
 /* ===============================
@@ -818,27 +750,16 @@ const DashboardPage = () => {
 .stat-icon {
   width: 48px;
   height: 48px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.45),
-    rgba(255, 255, 255, 0.2)
-  );
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  border-radius: 14px;
+  background: #e0f2fe;
+  border-radius: 12px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border: 1px solid rgba(255, 255, 255, 0.4);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 8px 20px rgba(14, 165, 233, 0.35);
+  border: 1px solid #bae6fd;
+  box-shadow: none;
+  color: #0369a1;
 }
 
 /* ===============================
@@ -853,7 +774,7 @@ const DashboardPage = () => {
   letter-spacing: 0.7px;
 
   color:  #0b0152; /* blue ocean */
-  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.5);
+  text-shadow: none;
 
   margin-bottom: 8px;
 }
@@ -864,10 +785,8 @@ const DashboardPage = () => {
   font-weight: 800;
   letter-spacing: -0.6px;
 
-  color: rgba(255, 255, 255, 0.98);
-  text-shadow:
-    0 2px 4px rgba(2, 6, 23, 0.55),
-    0 0 14px rgba(56, 189, 248, 0.25);
+  color: #0f172a;
+  text-shadow: none;
 }
 
 /* Subtitle (e.g. "LoRa Sensors") */
@@ -876,7 +795,7 @@ const DashboardPage = () => {
   font-weight: 600;
 
   color: #0b0152; /* lighter blue ocean */
-  text-shadow: 0 1px 2px rgba(2, 6, 23, 0.45);
+  text-shadow: none;
 
   margin-top: 6px;
 }
@@ -897,15 +816,15 @@ const DashboardPage = () => {
         }
 
         .section-title h2 {
-          font-size: 20px;
-          font-weight: 700;
+          font-size: 22px;
+          font-weight: 900;
           color: #000;
           letter-spacing: -0.3px;
         }
 
         .section-badge {
           padding: 8px 16px;
-          background: linear-gradient(135deg, #0369a1, #0284c7);
+          background: #0f172a;
           color: white;
           border-radius: 12px;
           font-size: 12px;
@@ -916,24 +835,23 @@ const DashboardPage = () => {
         /* Nodes Grid */
         .nodes-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 20px;
           margin-bottom: 24px;
         }
 
         .node-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 24px;
-          padding: 28px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+          background: #ffffff;
+          border-radius: 14px;
+          padding: 22px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .node-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 24px 48px rgba(0, 0, 0, 0.1);
+          transform: translateY(-3px);
+          box-shadow: 0 18px 34px rgba(15, 23, 42, 0.11);
           border-color: #0ea5e9;
         }
 
@@ -1280,12 +1198,11 @@ const DashboardPage = () => {
 
         /* Quick Actions Card */
         .quick-actions-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 24px;
-          padding: 28px;
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+          background: #ffffff;
+          border-radius: 14px;
+          padding: 22px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
         }
 
         /* Simplified Dashboard Overview Styles */
@@ -1299,15 +1216,23 @@ const DashboardPage = () => {
           display: flex;
           align-items: center;
           gap: 20px;
-          padding: 24px;
-          background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-          border-radius: 16px;
-          border: 2px solid #0ea5e9;
+          padding: 20px;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border-radius: 12px;
+          border: 1px solid #7dd3fc;
         }
 
         .water-icon {
-          font-size: 48px;
+          align-items: center;
+          background: #ffffff;
+          border: 1px solid #bae6fd;
+          border-radius: 12px;
+          display: flex;
+          font-size: 34px;
+          height: 58px;
+          justify-content: center;
           line-height: 1;
+          width: 58px;
         }
 
         .water-info {
@@ -1315,7 +1240,7 @@ const DashboardPage = () => {
         }
 
         .water-value-large {
-          font-size: 42px;
+          font-size: 38px;
           font-weight: 800;
           color: #0369a1;
           letter-spacing: -1px;
@@ -1324,7 +1249,7 @@ const DashboardPage = () => {
         }
 
         .water-value-large .unit {
-          font-size: 24px;
+          font-size: 20px;
           margin-left: 8px;
           color: #0284c7;
           font-weight: 600;
@@ -1370,13 +1295,13 @@ const DashboardPage = () => {
 
         .btn-view-details {
           width: 100%;
-          padding: 16px 24px;
-          background: linear-gradient(135deg, #0369a1, #0284c7);
+          padding: 14px 18px;
+          background: #0284c7;
           color: white;
           border: none;
-          border-radius: 12px;
-          font-size: 15px;
-          font-weight: 600;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 800;
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -1394,15 +1319,15 @@ const DashboardPage = () => {
 
         .quick-actions-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 12px;
         }
 
         .quick-action-btn {
-          padding: 24px;
-          background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-          border: 2px solid #e2e8f0;
-          border-radius: 16px;
+          padding: 20px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
@@ -1418,10 +1343,10 @@ const DashboardPage = () => {
         }
 
         .quick-action-icon {
-          width: 52px;
-          height: 52px;
-          background: linear-gradient(135deg, #0c4a6e, #0369a1);
-          border-radius: 14px;
+          width: 46px;
+          height: 46px;
+          background: #0f172a;
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1815,16 +1740,6 @@ const DashboardPage = () => {
             <div className="quick-action-text">
               <h4>Analytics</h4>
               <p>View trends & reports</p>
-            </div>
-          </button>
-
-          <button className="quick-action-btn" onClick={() => navigate("/health")}>
-            <div className="quick-action-icon">
-              <Gauge size={24} style={{ color: 'white' }} />
-            </div>
-            <div className="quick-action-text">
-              <h4>System Health</h4>
-              <p>Backend diagnostics</p>
             </div>
           </button>
 

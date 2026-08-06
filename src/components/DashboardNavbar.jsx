@@ -86,8 +86,8 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: linear-gradient(90deg,rgb(0, 11, 97) 0%, rgba(0, 0, 224, 1) 35%, rgb(77, 145, 255) 100%);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          background: #ffffff;
+          border-bottom: 1px solid #e5e7eb;
           transition: all var(--transition-normal);
           font-family: var(--font-primary);
           height: var(--size-navbar-height);
@@ -153,13 +153,13 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
         .logo-text h1 {
           font-size: 20px;
           font-weight: 700;
-          color: white;
+          color: #000000;
           letter-spacing: -0.5px;
         }
 
         .logo-text p {
           font-size: 11px;
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -183,7 +183,7 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           border-radius: var(--radius-md);
           font-size: 14px;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
           text-decoration: none;
           transition: all var(--transition-fast);
           letter-spacing: -0.2px;
@@ -191,20 +191,20 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
         }
 
         .nav-link:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
+          background: #f3f4f6;
+          color: #000000;
           transform: translateY(-1px);
         }
 
         .nav-link-active {
-          background: rgba(255, 255, 255, 0.2);
-          color: white;
+          background: #e5e7eb;
+          color: #000000;
           font-weight: 700;
         }
 
         .nav-link-active:hover {
-          background: rgba(255, 255, 255, 0.3);
-          color: white;
+          background: #e5e7eb;
+          color: #000000;
         }
 
         /* Time Display */
@@ -213,20 +213,20 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           align-items: center;
           gap: 8px;
           padding: 10px 16px;
-          background: rgba(255, 255, 255, 0.1);
+          background: #f8fafc;
           border-radius: var(--radius-md);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid #e5e7eb;
           transition: all var(--transition-fast);
           cursor: default;
         }
         
         .time-display:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: #f3f4f6;
           transform: translateY(-1px);
         }
 
         .time-icon {
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
         }
 
         .time-text {
@@ -238,13 +238,13 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
         .time-value {
           font-size: 13px;
           font-weight: 700;
-          color: white;
+          color: #000000;
           letter-spacing: -0.2px;
         }
 
         .time-label {
           font-size: 10px;
-          color: rgba(255, 255, 255, 0.6);
+          color: #000000;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -256,20 +256,20 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           width: 44px;
           height: 44px;
           border-radius: var(--radius-md);
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           transition: all var(--transition-fast);
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
           padding: var(--spacing-md);
         }
 
         .icon-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          color: white;
+          background: #f3f4f6;
+          color: #000000;
           transform: translateY(-1px);
         }
 
@@ -300,16 +300,16 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           gap: var(--spacing-md);
           padding: var(--spacing-md);
           border-radius: var(--radius-md);
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
           cursor: pointer;
           transition: all var(--transition-fast);
           text-decoration: none;
         }
 
         .profile-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          border-color: rgba(255, 255, 255, 0.3);
+          background: #f3f4f6;
+          border-color: #d1d5db;
           transform: translateY(-1px);
         }
 
@@ -349,13 +349,13 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
         .profile-name {
           font-size: 14px;
           font-weight: 700;
-          color: white;
+          color: #000000;
           letter-spacing: -0.2px;
         }
 
         .profile-role {
           font-size: 11px;
-          color: rgba(255, 255, 255, 0.7);
+          color: #000000;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.3px;
@@ -511,19 +511,19 @@ const DashboardNavbar = ({ mobileSidebarOpen, onMobileSidebarToggle }) => {
           width: 44px;
           height: 44px;
           border-radius: 12px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: #f8fafc;
+          border: 1px solid #e5e7eb;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: white;
+          color: #000000;
           transition: all 0.2s ease;
           margin-right: 8px;
         }
 
         .mobile-sidebar-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          color: white;
+          background: #f3f4f6;
+          color: #000000;
         }
 
         /* Mobile Menu */
